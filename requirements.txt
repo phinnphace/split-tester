@@ -1,3 +1,2 @@
 scikit-learn
 matplotlib
- no new dependencies needed, this is pure HTML/JS embedded via Streamlit's components.html()
