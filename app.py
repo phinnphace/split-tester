@@ -166,6 +166,138 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
         Very stable across splits (only {spread:.0%} variation). Your model is robust
         to split ratio. Carry on with 80/20.
         """)
+# ============================================================
+# WHEEL OF SPLITS
+# ============================================================
+st.header("🎰 Wheel of Splits")
+st.caption("Spin the wheel. Whatever split it lands on — that's your result. Publish it. Defend it. That's what the 80/20 default does.")
+
+wheel_html = """
+<div style="text-align: center;">
+  <canvas id="wheelCanvas" width="400" height="400" style="max-width: 100%;"></canvas>
+  <br>
+  <button onclick="spinWheel()" style="
+    background: #ff4b4b; color: white; border: none; padding: 12px 40px;
+    font-size: 18px; border-radius: 8px; cursor: pointer; margin-top: 10px;
+  ">🎰 SPIN THE WHEEL</button>
+  <div id="wheelResult" style="
+    font-size: 28px; font-weight: bold; margin-top: 20px; min-height: 40px;
+  "></div>
+</div>
+
+<script>
+const splits = [
+  {label: "50/50\\n55.5%", color: "#FF6B6B"},
+  {label: "60/40\\n64.8%", color: "#4ECDC4"},
+  {label: "70/30\\n53.7%", color: "#45B7D1"},
+  {label: "80/20\\n73.5%", color: "#96CEB4"},
+  {label: "90/10\\n69.4%", color: "#FFEAA7"},
+];
+
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const result = document.getElementById('wheelResult');
+let spinning = false;
+let angle = 0;
+
+function drawWheel(rotation) {
+  const cx = 200, cy = 200, radius = 180;
+  const sliceAngle = (2 * Math.PI) / splits.length;
+  
+  ctx.clearRect(0, 0, 400, 400);
+  
+  // Draw slices
+  splits.forEach((s, i) => {
+    const startAngle = rotation + i * sliceAngle;
+    const endAngle = startAngle + sliceAngle;
+    
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = s.color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Label
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(startAngle + sliceAngle / 2);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 14px sans-serif';
+    const lines = s.label.split('\\n');
+    lines.forEach((line, j) => {
+      ctx.fillText(line, radius * 0.6, (j - 0.5) * 20);
+    });
+    ctx.restore();
+  });
+  
+  // Center circle + pointer
+  ctx.beginPath();
+  ctx.arc(cx, cy, 25, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  
+  // Pointer triangle
+  ctx.beginPath();
+  ctx.moveTo(cx + radius + 10, cy);
+  ctx.lineTo(cx + radius - 15, cy - 15);
+  ctx.lineTo(cx + radius - 15, cy + 15);
+  ctx.closePath();
+  ctx.fillStyle = '#333';
+  ctx.fill();
+}
+
+function getSelectedSlice(rotation) {
+  const sliceAngle = (2 * Math.PI) / splits.length;
+  const pointerAngle = 0; // points right
+  let normalized = ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const selected = Math.floor(normalized / sliceAngle);
+  return splits[(splits.length - selected) % splits.length];
+}
+
+function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  result.innerHTML = "";
+  
+  const spins = 5 + Math.random() * 5;
+  const totalRotation = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
+  const duration = 3000;
+  const startTime = Date.now();
+  const startAngle = angle;
+  
+  function animate() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out
+    const eased = 1 - Math.pow(1 - progress, 3);
+    angle = startAngle + totalRotation * eased;
+    drawWheel(angle);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      spinning = false;
+      const selected = getSelectedSlice(angle);
+      result.innerHTML = "🎉 " + selected.label.replace('\\n', ' — ') + " accuracy!";
+    }
+  }
+  
+  animate();
+}
+
+drawWheel(0);
+</script>
+"""
+
+st.components.v1.html(wheel_html, height=550)
 
 # ============================================================
 # ABOUT
