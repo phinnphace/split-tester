@@ -170,28 +170,37 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
 # WHEEL OF SPLITS
 # ============================================================
 st.header("🎰 Wheel of Splits")
-st.caption("Spin the wheel. Whatever split it lands on — that's your result. Publish it. Defend it. That's what the 80/20 default does.")
+st.caption(
+    "Step right up, don't be shy. Pick a split, any split. "
+    "Feeling shy? Stick with the same old 80/20. "
+    "Feeling curious? Maybe even froggy? How about 60/40? "
+    "Don't let me pressure you. You do you. Have a go, spin away."
+)
 
 wheel_html = """
-<div style="text-align: center;">
+<div style="text-align: center; background: #1a1a2e; padding: 20px; border-radius: 16px;">
   <canvas id="wheelCanvas" width="400" height="400" style="max-width: 100%;"></canvas>
   <br>
   <button onclick="spinWheel()" style="
-    background: #ff4b4b; color: white; border: none; padding: 12px 40px;
-    font-size: 18px; border-radius: 8px; cursor: pointer; margin-top: 10px;
+    background: linear-gradient(135deg, #ff4b4b, #ff6b6b); 
+    color: white; border: none; padding: 14px 50px;
+    font-size: 20px; border-radius: 50px; cursor: pointer; 
+    margin-top: 15px; font-weight: bold; letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(255,75,75,0.4);
   ">🎰 SPIN THE WHEEL</button>
   <div id="wheelResult" style="
-    font-size: 28px; font-weight: bold; margin-top: 20px; min-height: 40px;
+    font-size: 24px; font-weight: bold; margin-top: 20px; 
+    min-height: 40px; padding: 15px; border-radius: 12px;
   "></div>
 </div>
 
 <script>
 const splits = [
-  {label: "50/50\\n55.5%", color: "#FF6B6B"},
-  {label: "60/40\\n64.8%", color: "#4ECDC4"},
-  {label: "70/30\\n53.7%", color: "#45B7D1"},
-  {label: "80/20\\n73.5%", color: "#96CEB4"},
-  {label: "90/10\\n69.4%", color: "#FFEAA7"},
+  {label: "50/50", acc: "55.5%", color: "#FF6B6B"},
+  {label: "60/40", acc: "64.8%", color: "#4ECDC4"},
+  {label: "70/30", acc: "53.7%", color: "#45B7D1"},
+  {label: "80/20", acc: "73.5%", color: "#96CEB4"},
+  {label: "90/10", acc: "69.4%", color: "#FFD93D"},
 ];
 
 const canvas = document.getElementById('wheelCanvas');
@@ -206,7 +215,6 @@ function drawWheel(rotation) {
   
   ctx.clearRect(0, 0, 400, 400);
   
-  // Draw slices
   splits.forEach((s, i) => {
     const startAngle = rotation + i * sliceAngle;
     const endAngle = startAngle + sliceAngle;
@@ -217,46 +225,49 @@ function drawWheel(rotation) {
     ctx.closePath();
     ctx.fillStyle = s.color;
     ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 3;
     ctx.stroke();
     
-    // Label
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(startAngle + sliceAngle / 2);
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#333';
-    ctx.font = 'bold 14px sans-serif';
-    const lines = s.label.split('\\n');
-    lines.forEach((line, j) => {
-      ctx.fillText(line, radius * 0.6, (j - 0.5) * 20);
-    });
+    ctx.fillStyle = '#1a1a2e';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(s.label, radius * 0.55, -6);
+    ctx.font = '11px sans-serif';
+    ctx.fillText(s.acc, radius * 0.55, 14);
     ctx.restore();
   });
   
-  // Center circle + pointer
+  // Center hub
+  const grad = ctx.createRadialGradient(cx, cy, 5, cx, cy, 30);
+  grad.addColorStop(0, '#fff');
+  grad.addColorStop(1, '#ddd');
   ctx.beginPath();
-  ctx.arc(cx, cy, 25, 0, 2 * Math.PI);
-  ctx.fillStyle = '#fff';
+  ctx.arc(cx, cy, 28, 0, 2 * Math.PI);
+  ctx.fillStyle = grad;
   ctx.fill();
-  ctx.strokeStyle = '#333';
+  ctx.strokeStyle = '#1a1a2e';
   ctx.lineWidth = 3;
   ctx.stroke();
   
-  // Pointer triangle
+  // Pointer
   ctx.beginPath();
-  ctx.moveTo(cx + radius + 10, cy);
-  ctx.lineTo(cx + radius - 15, cy - 15);
-  ctx.lineTo(cx + radius - 15, cy + 15);
+  ctx.moveTo(cx + radius + 8, cy);
+  ctx.lineTo(cx + radius - 20, cy - 18);
+  ctx.lineTo(cx + radius - 20, cy + 18);
   ctx.closePath();
-  ctx.fillStyle = '#333';
+  ctx.fillStyle = '#fff';
   ctx.fill();
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
 
 function getSelectedSlice(rotation) {
   const sliceAngle = (2 * Math.PI) / splits.length;
-  const pointerAngle = 0; // points right
   let normalized = ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
   const selected = Math.floor(normalized / sliceAngle);
   return splits[(splits.length - selected) % splits.length];
@@ -266,6 +277,7 @@ function spinWheel() {
   if (spinning) return;
   spinning = true;
   result.innerHTML = "";
+  result.style.background = "transparent";
   
   const spins = 5 + Math.random() * 5;
   const totalRotation = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
@@ -276,7 +288,6 @@ function spinWheel() {
   function animate() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // Ease out
     const eased = 1 - Math.pow(1 - progress, 3);
     angle = startAngle + totalRotation * eased;
     drawWheel(angle);
@@ -286,7 +297,9 @@ function spinWheel() {
     } else {
       spinning = false;
       const selected = getSelectedSlice(angle);
-      result.innerHTML = "🎉 " + selected.label.replace('\\n', ' — ') + " accuracy!";
+      result.innerHTML = "🎉 " + selected.label + " split — <b>" + selected.acc + " accuracy</b>";
+      result.style.background = "linear-gradient(135deg, " + selected.color + "33, " + selected.color + "11)";
+      result.style.color = "#fff";
     }
   }
   
@@ -297,15 +310,4 @@ drawWheel(0);
 </script>
 """
 
-st.components.v1.html(wheel_html, height=550)
-
-# ============================================================
-# ABOUT
-# ============================================================
-st.divider()
-st.caption(
-    "This demo uses real handwritten Chinese characters from the CASIA-HWDB database "
-    "(Liu et al., 2011). It emerged from a side quest in a larger experiment on "
-    "contextual visual learning. [Full project](https://github.com/phinnphace/80-20) | "
-    "[Interactive dashboard](https://80-20.streamlit.app)"
-)
+st.components.v1.html(wheel_html, height=560, scrolling=False)
