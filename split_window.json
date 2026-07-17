@@ -1,0 +1,27 @@
+{
+  "train_50_val_50": {
+    "train_size": 244,
+    "val_size": 245,
+    "val_accuracy": 0.6448979591836734
+  },
+  "train_60_val_40": {
+    "train_size": 293,
+    "val_size": 196,
+    "val_accuracy": 0.6020408163265306
+  },
+  "train_70_val_30": {
+    "train_size": 342,
+    "val_size": 147,
+    "val_accuracy": 0.673469387755102
+  },
+  "train_80_val_19": {
+    "train_size": 391,
+    "val_size": 98,
+    "val_accuracy": 0.7346938775510204
+  },
+  "train_90_val_9": {
+    "train_size": 440,
+    "val_size": 49,
+    "val_accuracy": 0.8163265306122449
+  }
+}
