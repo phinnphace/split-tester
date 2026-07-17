@@ -235,9 +235,7 @@ function drawWheel(rotation) {
     ctx.textAlign = 'center';
     ctx.fillStyle = '#1a1a2e';
     ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(s.label, radius * 0.55, -6);
-    ctx.font = '11px sans-serif';
-    ctx.fillText(s.acc, radius * 0.55, 14);
+    ctx.fillText(s.label, radius * 0.55, 4);
     ctx.restore();
   });
   
