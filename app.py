@@ -5,8 +5,8 @@ Drop-in app that tests how train/val split ratio affects model performance.
 Uses real Chinese character images from the CASIA handwriting database.
 """
 import streamlit as st
+import streamlit.components.v1 as components
 import zipfile
-import io
 import numpy as np
 from PIL import Image
 from sklearn.ensemble import RandomForestClassifier
@@ -26,16 +26,20 @@ def load_sample_data():
     images = []
     labels = []
     
-    with zipfile.ZipFile('sample_data.zip', 'r') as z:
-        for fname in z.namelist():
-            if fname.endswith('.png'):
-                # Parse label from path: condition_a/da/da_0001.png -> 1
-                label = 1 if '/da/' in fname else 0
-                with z.open(fname) as f:
-                    img = Image.open(f).convert('L')
-                    img = img.resize((32, 32))  # Small for fast demo
-                    images.append(np.array(img).flatten())
-                    labels.append(label)
+    try:
+        with zipfile.ZipFile('sample_data.zip', 'r') as z:
+            for fname in z.namelist():
+                if fname.endswith('.png'):
+                    # Parse label from path: condition_a/da/da_0001.png -> 1
+                    label = 1 if '/da/' in fname else 0
+                    with z.open(fname) as f:
+                        img = Image.open(f).convert('L')
+                        img = img.resize((32, 32))  # Small for fast demo
+                        images.append(np.array(img).flatten())
+                        labels.append(label)
+    except FileNotFoundError:
+        st.error("sample_data.zip not found. Please ensure it is in the app directory.")
+        st.stop()
     
     return np.array(images), np.array(labels)
 
@@ -109,27 +113,27 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
     # RESULTS
     # ============================================================
     results = st.session_state.results
-    splits = list(results.keys())
-    accs = [results[s]['accuracy'] for s in splits]
+    splits_list = list(results.keys())
+    accs = [results[s]['accuracy'] for s in splits_list]
     
     # Metrics
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Best Accuracy", f"{max(accs):.1%}", delta=f"at {splits[accs.index(max(accs))]}")
+        st.metric("Best Accuracy", f"{max(accs):.1%}", delta=f"at {splits_list[accs.index(max(accs))]}")
     with col2:
-        st.metric("Worst Accuracy", f"{min(accs):.1%}", delta=f"at {splits[accs.index(min(accs))]}")
+        st.metric("Worst Accuracy", f"{min(accs):.1%}", delta=f"at {splits_list[accs.index(min(accs))]}")
     with col3:
         spread = max(accs) - min(accs)
         st.metric("Spread", f"{spread:.1%}", delta="points across splits")
     
     # Plot
     fig, ax = plt.subplots(figsize=(8, 4))
-    x = range(len(splits))
+    x = range(len(splits_list))
     ax.plot(x, [r['accuracy'] for r in results.values()], 'o-', 
             color='#1f77b4', linewidth=2, markersize=10)
     ax.axhline(y=np.mean(accs), color='gray', linestyle='--', alpha=0.5, label='Mean')
     ax.set_xticks(x)
-    ax.set_xticklabels(splits)
+    ax.set_xticklabels(splits_list)
     ax.set_ylabel('Validation Accuracy')
     ax.set_xlabel('Train/Val Split Ratio')
     ax.set_title(f'Effect of Split Ratio on {model_name}')
@@ -147,12 +151,13 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
     st.divider()
     st.subheader("What This Means")
     
+    spread = max(accs) - min(accs)
     if spread > 0.10:
         st.warning(f"""
         Your model's validation accuracy varies by **{spread:.0%}** just from changing the split ratio.
         
-        If you'd stopped at **{splits[accs.index(min(accs))]}**, you'd report **{min(accs):.1%}**.
-        At **{splits[accs.index(max(accs))]}**, you'd report **{max(accs):.1%}**.
+        If you'd stopped at **{splits_list[accs.index(min(accs))]}**, you'd report **{min(accs):.1%}**.
+        At **{splits_list[accs.index(max(accs))]}**, you'd report **{max(accs):.1%}**.
         
         Both are "correct." Neither tells the full story. Your 80/20 default deserves scrutiny.
         """)
@@ -166,15 +171,11 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
         Very stable across splits (only {spread:.0%} variation). Your model is robust
         to split ratio. Carry on with 80/20.
         """)
-# ============================================================
-#
+
 # ============================================================
 # WHEEL OF SPLITS
 # ============================================================
-import streamlit as st
-import streamlit.components.v1 as components
-from pathlib import Path
-
+st.divider()
 st.header("🎰 Wheel of Splits")
 st.caption(
     "Step right up, don't be shy. Pick a split, any split. "
@@ -183,25 +184,13 @@ st.caption(
     "Don't let me pressure you. You do you. Have a go, spin away."
 )
 
-def load_wheel_asset(file_name: str) -> str:
-    """Reads the compiled standalone HTML/JS widget file from disk."""
-    widget_path = Path(__file__).parent / file_name
-    if not widget_path.exists():
-        return ""
-    return widget_path.read_text(encoding="utf-8")
-
-# Load the single, self-contained file built from the local repo
-wheel_markup = load_wheel_asset("carnival_wheel.html")
-
-if wheel_markup:
-    # Renders the high-performance local iframe here
-    components.html(
-        wheel_markup, 
-        height=650, 
-        scrolling=False
-    )
-else:
-    st.error("Could not find the carnival_wheel.html file in your app directory!")
+# Embed the deployed AI Studio widget directly via iframe.
+# This bypasses local file path errors and ensures all JS/CSS assets load correctly.
+components.iframe(
+    "https://ais-dev-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app/",
+    height=600,
+    scrolling=False
+)
 
 # ============================================================
 # ABOUT
@@ -213,4 +202,3 @@ st.caption(
     "contextual visual learning. [Full project](https://github.com/phinnphace/80-20) | "
     "[Interactive dashboard](https://80-20.streamlit.app)"
 )
-
