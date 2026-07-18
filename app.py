@@ -167,8 +167,14 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
         to split ratio. Carry on with 80/20.
         """)
 # ============================================================
+#
+# ============================================================
 # WHEEL OF SPLITS
 # ============================================================
+import streamlit as st
+import streamlit.components.v1 as components
+from pathlib import Path
+
 st.header("🎰 Wheel of Splits")
 st.caption(
     "Step right up, don't be shy. Pick a split, any split. "
@@ -177,135 +183,34 @@ st.caption(
     "Don't let me pressure you. You do you. Have a go, spin away."
 )
 
-wheel_html = """
-<div style="text-align: center; background: #1a1a2e; padding: 20px; border-radius: 16px;">
-  <canvas id="wheelCanvas" width="400" height="400" style="max-width: 100%;"></canvas>
-  <br>
-  <button onclick="spinWheel()" style="
-    background: linear-gradient(135deg, #ff4b4b, #ff6b6b); 
-    color: white; border: none; padding: 14px 50px;
-    font-size: 20px; border-radius: 50px; cursor: pointer; 
-    margin-top: 15px; font-weight: bold; letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(255,75,75,0.4);
-  ">🎰 SPIN THE WHEEL</button>
-  <div id="wheelResult" style="
-    font-size: 24px; font-weight: bold; margin-top: 20px; 
-    min-height: 40px; padding: 15px; border-radius: 12px;
-  "></div>
-</div>
+def load_wheel_asset(file_name: str) -> str:
+    """Reads the compiled standalone HTML/JS widget file from disk."""
+    widget_path = Path(__file__).parent / file_name
+    if not widget_path.exists():
+        return ""
+    return widget_path.read_text(encoding="utf-8")
 
-<script>
-const splits = [
-  {label: "50/50", acc: "55.5%", color: "#FF6B6B"},
-  {label: "60/40", acc: "64.8%", color: "#4ECDC4"},
-  {label: "70/30", acc: "53.7%", color: "#45B7D1"},
-  {label: "80/20", acc: "73.5%", color: "#96CEB4"},
-  {label: "90/10", acc: "69.4%", color: "#FFD93D"},
-];
+# Load the single, self-contained file built from the local repo
+wheel_markup = load_wheel_asset("carnival_wheel.html")
 
-const canvas = document.getElementById('wheelCanvas');
-const ctx = canvas.getContext('2d');
-const result = document.getElementById('wheelResult');
-let spinning = false;
-let angle = 0;
+if wheel_markup:
+    # Renders the high-performance local iframe here
+    components.html(
+        wheel_markup, 
+        height=650, 
+        scrolling=False
+    )
+else:
+    st.error("Could not find the carnival_wheel.html file in your app directory!")
 
-function drawWheel(rotation) {
-  const cx = 200, cy = 200, radius = 180;
-  const sliceAngle = (2 * Math.PI) / splits.length;
-  
-  ctx.clearRect(0, 0, 400, 400);
-  
-  splits.forEach((s, i) => {
-    const startAngle = rotation + i * sliceAngle;
-    const endAngle = startAngle + sliceAngle;
-    
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, radius, startAngle, endAngle);
-    ctx.closePath();
-    ctx.fillStyle = s.color;
-    ctx.fill();
-    ctx.strokeStyle = '#1a1a2e';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(startAngle + sliceAngle / 2);
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#1a1a2e';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(s.label, radius * 0.55, 4);
-    ctx.restore();
-  });
-  
-  // Center hub
-  const grad = ctx.createRadialGradient(cx, cy, 5, cx, cy, 30);
-  grad.addColorStop(0, '#fff');
-  grad.addColorStop(1, '#ddd');
-  ctx.beginPath();
-  ctx.arc(cx, cy, 28, 0, 2 * Math.PI);
-  ctx.fillStyle = grad;
-  ctx.fill();
-  ctx.strokeStyle = '#1a1a2e';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  
-  // Pointer
-  ctx.beginPath();
-  ctx.moveTo(cx + radius + 8, cy);
-  ctx.lineTo(cx + radius - 20, cy - 18);
-  ctx.lineTo(cx + radius - 20, cy + 18);
-  ctx.closePath();
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  ctx.strokeStyle = '#1a1a2e';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
+# ============================================================
+# ABOUT
+# ============================================================
+st.divider()
+st.caption(
+    "This demo uses real handwritten Chinese characters from the CASIA-HWDB database "
+    "(Liu et al., 2011). It emerged from a side quest in a larger experiment on "
+    "contextual visual learning. [Full project](https://github.com/phinnphace/80-20) | "
+    "[Interactive dashboard](https://80-20.streamlit.app)"
+)
 
-function getSelectedSlice(rotation) {
-  const sliceAngle = (2 * Math.PI) / splits.length;
-  let normalized = ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-  const selected = Math.floor(normalized / sliceAngle);
-  return splits[(splits.length - selected) % splits.length];
-}
-
-function spinWheel() {
-  if (spinning) return;
-  spinning = true;
-  result.innerHTML = "";
-  result.style.background = "transparent";
-  
-  const spins = 5 + Math.random() * 5;
-  const totalRotation = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
-  const duration = 3000;
-  const startTime = Date.now();
-  const startAngle = angle;
-  
-  function animate() {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    angle = startAngle + totalRotation * eased;
-    drawWheel(angle);
-    
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      spinning = false;
-      const selected = getSelectedSlice(angle);
-      result.innerHTML = "🎉 " + selected.label + " split — <b>" + selected.acc + " accuracy</b>";
-      result.style.background = "linear-gradient(135deg, " + selected.color + "33, " + selected.color + "11)";
-      result.style.color = "#fff";
-    }
-  }
-  
-  animate();
-}
-
-drawWheel(0);
-</script>
-"""
-
-st.components.v1.html(wheel_html, height=560, scrolling=False)
