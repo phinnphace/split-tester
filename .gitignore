@@ -7,3 +7,6 @@ venv/
 data/
 !split_tester/sample_data.zip
 .streamlit/secrets.toml
+node_modules/
+dist/
+.vite/
