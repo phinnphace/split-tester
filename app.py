@@ -175,23 +175,19 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
 # ============================================================
 # WHEEL OF SPLITS
 # ============================================================
-st.divider()
-st.header("🎰 Wheel of Splits")
-st.caption(
-    "Step right up, don't be shy. Pick a split, any split. "
-    "Feeling shy? Stick with the same old 80/20. "
-    "Feeling curious? Maybe even froggy? How about 60/40? "
-    "Don't let me pressure you. You do you. Have a go, spin away."
-)
+import streamlit as st
+import streamlit.components.v1 as components
 
-# Embed the deployed AI Studio widget directly via iframe.
-# This bypasses local file path errors and ensures all JS/CSS assets load correctly.
+# --- Theme Styling ---
+st.markdown("### 🎪 Carnival Split Wheel Widget")
+st.write("Flick the wheel or click spin to calculate accuracy yields:")
+
+# --- Embed the Carnival Split Wheel Widget ---
 components.iframe(
-    "https://ais-dev-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app/",
+    src="https://ais-dev-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app/",
     height=600,
-    scrolling=False
+    scrolling=True
 )
-
 # ============================================================
 # ABOUT
 # ============================================================
