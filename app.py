@@ -183,8 +183,8 @@ st.markdown("### 🎪 Carnival Split Wheel Widget")
 st.write("Flick the wheel or click spin to calculate accuracy yields:")
 
 # --- Embed the Carnival Split Wheel Widget ---
-components.iframe(
-    src="https://ais-dev-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app/",
+st.iframe(
+    src="https://ais-pre-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app",
     height=600,
     scrolling=True
 )
