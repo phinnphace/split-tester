@@ -183,7 +183,6 @@ st.caption(
     "Don't let me pressure you. You do you. Have a go, spin away."
 )
 
-@st.cache_data
 def load_wheel_html():
     wheel_file = Path(__file__).parent / "carnival_wheel.html"
     if wheel_file.exists():
