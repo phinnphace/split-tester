@@ -176,7 +176,6 @@ if st.button("Run Test", type="primary") or 'results' in st.session_state:
 # WHEEL OF SPLITS
 # ============================================================
 import streamlit as st
-import streamlit.components.v1 as components
 
 # --- Theme Styling ---
 st.markdown("### 🎪 Carnival Split Wheel Widget")
@@ -185,8 +184,7 @@ st.write("Flick the wheel or click spin to calculate accuracy yields:")
 # --- Embed the Carnival Split Wheel Widget ---
 st.iframe(
     src="https://ais-pre-b3o7euh232n3ji7uosboue-514512971515.us-east1.run.app",
-    height=600,
-    scrolling=True
+    height=600
 )
 # ============================================================
 # ABOUT
