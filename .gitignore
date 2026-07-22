@@ -10,3 +10,8 @@ data/
 node_modules/
 dist/
 .vite/
+# Windows "mark of the web" alternate-data-stream junk
+*:Zone.Identifier
+# carnival wheel SOURCE working copy — only the built carnival_wheel.html is tracked
+carnival-split-wheel/
+carnival-split-wheel.zip
