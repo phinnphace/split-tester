@@ -14,12 +14,12 @@
     "val_size": 147,
     "val_accuracy": 0.673469387755102
   },
-  "train_80_val_19": {
+  "train_80_val_20": {
     "train_size": 391,
     "val_size": 98,
     "val_accuracy": 0.7346938775510204
   },
-  "train_90_val_9": {
+  "train_90_val_10": {
     "train_size": 440,
     "val_size": 49,
     "val_accuracy": 0.8163265306122449

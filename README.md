@@ -23,16 +23,32 @@ I invite you explore, employ, question.
 
 Same model. Same seed. Same data. The only variable is the train/val ratio. If I'd stopped at 60/40, I'd report 60.2%. At 90/10, I'd report 81.6%. Both numbers are "correct." Neither tells the whole story.
 
+## Where the numbers live
+
+The table above is the Phase 10 run: produced by
+[`phase10_split_comparison.py`](phase10_split_comparison.py), recorded verbatim in
+[`split_window.json`](split_window.json). One shuffle is drawn per run and held fixed
+across all five splits, so the ratio is the only thing that moves.
+
+[`table1_experimental_results.csv`](table1_experimental_results.csv) is Table 1 of the
+[main project's](https://github.com/phinnphace/80-20) experimental results — a separate run that
+also covers Condition B (bigrams) and transfer evaluation (held-out CASIA, CalliBench).
+Its Condition A validation numbers differ from the table above because it used a different
+shuffle draw. That gap between two "correct" runs is itself the point this repo makes.
+
 ## Try it yourself
 
-A 40-image sample of the actual dataset is included in `sample\_data.zip`.
+Prefer to just spin? The Wheel of Splits is live at
+[go.dataacorns.com/80-20/carnival-wheel](https://go.dataacorns.com/80-20/carnival-wheel).
+
+A 40-image sample of the actual dataset is included in `sample_data.zip`.
 Each image is a 100×100 grayscale PNG: isolated characters (Condition A)
 or two-character bigrams (Condition B), labeled as 打 (positive) or a
 visually similar distractor (negative).
 
 The full dataset (489 Condition A + 298 Condition B images) is available
-from the CASIA-HWDB database via HuggingFace. See the main project repo
-for extraction scripts.
+from the CASIA-HWDB database via HuggingFace. See the
+[main project repo](https://github.com/phinnphace/80-20) for extraction scripts.
 
 ## The tool
 
@@ -62,7 +78,12 @@ dict(d)    # plain dict, JSON-serializable
 ```
 
 ### Technique-sticky, not framework-agnostic
-Where Ml goes (an ever increasing expanse of domains) , this goes with
+<<<<<<< HEAD
+Where Ml goes (an ever increasing expanse of domains, this goes with)
+=======
+
+Wherever ML goes — an ever-increasing expanse of domains — this goes with it.
+>>>>>>> 8d6b1a4 (add showcase page, vercel config, wheel text fix)
 It sticks into *your* workflow through optional hooks — the headline call stays a one-liner:
 
 | hook | what it is | default |

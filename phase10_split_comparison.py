@@ -117,14 +117,18 @@ print()
 images, labels = load_all_data()
 print(f"Total images: {len(images)} ({sum(labels)} da, {len(labels)-sum(labels)} other)")
 
-# Fixed shuffle order for all splits
+# Fixed shuffle order for all splits.
+# NOTE: SystemRandom is NOT seeded — the shuffle is fixed *within* a run (all five
+# splits share it, so the ratio is the only variable), but a re-run draws a new
+# shuffle and will produce different numbers. FIXED_SEED covers model init/training.
 rng = secrets.SystemRandom()
 indices = list(range(len(images)))
 rng.shuffle(indices)
 
 results = {}
 for split in SPLITS:
-    split_name = f"train_{int(split*100)}_val_{int((1-split)*100)}"
+    # round(), not int(): int((1-0.8)*100) truncates to 19 (float error) -> "val_19"
+    split_name = f"train_{round(split*100)}_val_{round((1-split)*100)}"
     split_idx = int(len(indices) * split)
     train_idx = indices[:split_idx]
     val_idx = indices[split_idx:]
@@ -146,6 +150,7 @@ print(f"\nSplit ratio window:")
 for name, r in results.items():
     print(f"  {name}: {r['val_accuracy']:.4f}")
 
+os.makedirs('models', exist_ok=True)
 with open('models/split_window.json', 'w') as f:
     json.dump(results, f, indent=2)
 print("\nSaved to models/split_window.json")

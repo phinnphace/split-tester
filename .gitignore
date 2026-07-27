@@ -1,12 +1,11 @@
 __pycache__/
 *.py[cod]
+.pytest_cache/
 venv/
 .venv/
 .DS_Store
 .streamlit/
 data/
-!split_tester/sample_data.zip
-.streamlit/secrets.toml
 node_modules/
 dist/
 .vite/

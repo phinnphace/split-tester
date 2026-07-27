@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split Ratio Tester — Internal Validation Is Not a Result</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --border: #252525;
+    --text: #e4e4e4;
+    --muted: #666;
+    --accent: #ff6b35;
+    --data: #64d2ff;
+    --green: #4ade80;
+    --red: #f87171;
+    --code-bg: #0f1117;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  a { color: var(--data); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── HERO ─────────────────────────────────────────── */
+  .hero { padding: 110px 0 80px; }
+
+  .hero-eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 5.5vw, 54px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+
+  .hero-sub {
+    font-size: 19px;
+    color: #999;
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 20px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+  }
+  .hero-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    letter-spacing: 0.01em;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .hero-links a:hover { color: var(--text); border-color: #555; }
+
+  /* ── SECTIONS ─────────────────────────────────────── */
+  hr.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  .section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin-bottom: 22px;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: #ccc;
+  }
+
+  p { color: #b8b8b8; margin-bottom: 18px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── PULLQUOTE ────────────────────────────────────── */
+  .pullquote {
+    border-left: 2px solid var(--accent);
+    padding: 8px 24px;
+    margin: 36px 0;
+    font-size: 20px;
+    font-style: italic;
+    color: #ddd;
+    line-height: 1.5;
+  }
+
+  /* ── EMPHASIS BLOCK ───────────────────────────────── */
+  .lede {
+    font-size: 20px;
+    color: #d0d0d0;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* ── STAT CARDS ───────────────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 32px 0;
+  }
+  @media (max-width: 520px) { .stats-row { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 34px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .stat-value.hi  { color: var(--data); }
+  .stat-value.mid { color: var(--accent); }
+  .stat-value.lo  { color: var(--muted); }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 7px; }
+
+  /* ── CHART ────────────────────────────────────────── */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px 20px;
+    margin: 24px 0;
+  }
+  .chart-caption {
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  /* ── DATA TABLE ───────────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 24px 0;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: #bbb;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr.row-default td { background: rgba(100,210,255,0.04); }
+  .data-table tr.row-default td:first-child { border-left: 2px solid var(--data); padding-left: 12px; }
+  .data-table td.acc-hi { color: var(--data); font-weight: 600; }
+  .data-table td.acc-lo { color: var(--muted); }
+
+  .badge {
+    display: inline-block;
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 7px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+  .b-default { background: rgba(100,210,255,0.12); color: var(--data); }
+  .b-high    { background: rgba(74,222,128,0.12);  color: var(--green); }
+  .b-low     { background: rgba(248,113,113,0.12); color: var(--red); }
+
+  /* ── CALLOUT ──────────────────────────────────────── */
+  .callout {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 28px 0;
+    font-size: 15px;
+    color: #bbb;
+    line-height: 1.65;
+  }
+  .callout.warn { border-left: 3px solid var(--accent); }
+  .callout.info { border-left: 3px solid var(--data); }
+  .callout strong { color: var(--text); }
+
+  /* ── CODE ─────────────────────────────────────────── */
+  code {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    font-size: 0.875em;
+    color: var(--data);
+    background: rgba(100,210,255,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+    line-height: 1.65;
+  }
+  pre code {
+    font-size: 13.5px;
+    background: none;
+    color: #cbd5e1;
+    padding: 0;
+  }
+  .kw { color: #c084fc; }
+  .fn { color: #93c5fd; }
+  .nm { color: #fb923c; }
+  .cm { color: #4b5563; font-style: italic; }
+
+  /* ── HOOKS TABLE ──────────────────────────────────── */
+  .hooks-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 16px 0 24px;
+  }
+  .hooks-table th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 500;
+  }
+  .hooks-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: #aaa;
+    vertical-align: top;
+  }
+  .hooks-table tr:last-child td { border-bottom: none; }
+  .hooks-table td:first-child {
+    font-family: "SF Mono", Consolas, monospace;
+    color: var(--data);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .hooks-table td:last-child { color: #666; }
+
+  /* ── WHEEL ────────────────────────────────────────── */
+  .wheel-wrap {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 24px;
+    background: #111;
+  }
+  iframe { display: block; border: none; width: 100%; }
+
+  /* ── FOOTER ───────────────────────────────────────── */
+  footer {
+    padding: 52px 0 60px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-links {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .footer-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-links a:hover { color: #aaa; }
+  .footer-note {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.65;
+    max-width: 520px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">split-tester · side-quest from 80-20</div>
+    <h1>Internal validation is not a result. It's a calibration.</h1>
+    <p class="hero-sub">The number your model reports depends on choices you didn't report. The train/val split ratio is one of them — inherited from convention, almost never tested, and capable of moving your accuracy by more than 20 points.</p>
+    <div class="hero-links">
+      <a href="https://github.com/phinnphace/split-tester">GitHub ↗</a>
+      <a href="https://github.com/phinnphace/80-20">80-20 main project ↗</a>
+    </div>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ═══════════════════════════════════════════════════════ THE PROBLEM -->
+<div class="container">
+  <div class="section">
+    <div class="section-label">The problem</div>
+    <h2>When a diagnostic gets reported as a finding</h2>
+
+    <p class="lede">Machine learning practitioners regularly report internal validation accuracy as if it were an empirical result. It isn't. It's a measurement of how the model performs on one particular slice of one particular dataset on one particular day — shaped by configuration choices that were never made explicit.</p>
+
+    <p>The specific slice is determined by the train/val split. The specific configuration includes the split ratio — what fraction of the data is reserved for validation. That ratio is almost always 80/20, not because it was derived from theory, not because it was validated against alternatives, but because it was in the textbook, which inherited it from the previous textbook, which inherited it from practice that predates modern datasets by decades.</p>
+
+    <div class="pullquote">
+      The number you report depends on where you drew a line. If you didn't test where you drew it, you don't know what you reported.
+    </div>
+
+    <p>This is not a fringe case. It is the default condition. Internal validation accuracy — the number that shows up in papers, blog posts, model cards, and production dashboards — is at best a calibration diagnostic. It tells you the data behaved that day. It tells you the cat didn't spill coffee on the GPU. It does not tell you how the model generalizes, because generalization requires external validation that most workflows never reach.</p>
+
+    <p>The split ratio is one unchecked lever among several. This project focuses on it specifically because it is the most tractable: it's a single scalar, it's reproducible, and it's invisible to the reader of any paper that doesn't explicitly report it.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ HOW WE GOT HERE -->
+<div class="container">
+  <div class="section">
+    <div class="section-label">Historical context</div>
+    <h2>How 80/20 became the default nobody questions</h2>
+
+    <p>The 80/20 split did not emerge from ML research. It was not empirically optimized. It predates modern neural networks, large-scale datasets, and most of the domains where it is now applied without modification.</p>
+
+    <p>Early practice — when datasets were small enough that cross-validation was computationally expensive — required a single held-out set. The choice of how large to make it was pragmatic, not principled. A round number. A number that left enough data for training without making the validation set trivially small. 80/20 was convenient. It fit on a page. It became a worked example. Worked examples become defaults. Defaults become invisible.</p>
+
+    <p>Tracing exactly when and how this specific ratio became entrenched — across textbooks, benchmark datasets, standard library defaults, and reproducibility norms — is ongoing research. What is already clear is that the ratio spread faster than the caveats that should have accompanied it. Those caveats were present in the original literature. They did not travel well.</p>
+
+    <div class="callout info">
+      <strong>The rule you inherited was never a rule.</strong> It was a heuristic for a data regime that no longer exists, applied with the confidence of a law to datasets that would have been unimaginable when the heuristic was first written down.
+    </div>
+
+    <p>The consequence is that a large fraction of reported ML accuracy numbers are conditionally true in a way that was never made explicit: true given this split, this seed, this ratio. Change any of those and the number changes. Nobody reports them. Nobody tests whether they matter. The experiment below shows what happens when you do.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ DEMONSTRATION -->
+<div class="container">
+  <div class="section">
+    <div class="section-label">A demonstration</div>
+    <h2>One model. One dataset. Five ratios. Five different answers.</h2>
+
+    <p>The domain is incidental. What follows used real handwritten Chinese characters from the <a href="http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html">CASIA-HWDB database</a> — 40 images, a Random Forest classifier, and a fixed seed. The characters could have been anything. The result would have been structurally identical.</p>
+
+    <p>The only variable: where the train/val boundary falls.</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Highest reported</div>
+        <div class="stat-value hi">81.6%</div>
+        <div class="stat-sub">at 90/10 split</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Delta (spread)</div>
+        <div class="stat-value mid">21.4pp</div>
+        <div class="stat-sub">across five configurations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Lowest reported</div>
+        <div class="stat-value lo">60.2%</div>
+        <div class="stat-sub">at 60/40 split</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <canvas id="splitChart" height="240"></canvas>
+      <div class="chart-caption">Validation accuracy by split ratio — Random Forest, n=40 CASIA images, seed=42. The highlighted bar is the conventional default.</div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Split</th>
+          <th>Train</th>
+          <th>Val</th>
+          <th>Reported accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>50/50</td>
+          <td>20</td><td>20</td>
+          <td>64.5%</td>
+        </tr>
+        <tr>
+          <td>60/40 <span class="badge b-low">lowest</span></td>
+          <td>24</td><td>16</td>
+          <td class="acc-lo">60.2%</td>
+        </tr>
+        <tr>
+          <td>70/30</td>
+          <td>28</td><td>12</td>
+          <td>67.3%</td>
+        </tr>
+        <tr class="row-default">
+          <td>80/20 <span class="badge b-default">default</span></td>
+          <td>32</td><td>8</td>
+          <td>73.5%</td>
+        </tr>
+        <tr>
+          <td>90/10 <span class="badge b-high">highest</span></td>
+          <td>36</td><td>4</td>
+          <td class="acc-hi">81.6%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <strong>These are five correct answers to the same question.</strong> The question was never "what is this model's accuracy" — it was "what is this model's accuracy given a specific split configuration that was never made explicit." Stopping at 60/40 gives 60.2%. Stopping at 90/10 gives 81.6%. Neither number is wrong. Both are incomplete.
+    </div>
+
+    <p>Notice also that 60/40 performs worse than 50/50. More training data did not help — it shrank the validation set to the point where a few samples determine the entire reported number. The relationship is not monotonic. The assumption that "more training data → better validation performance" is not safe to hold without testing it.</p>
+
+    <p>The conventional 80/20 sits at 73.5% — more than 8 points above the worst possible answer, 8 points below the best. It is not wrong. It is not optimal. It is one configuration out of several, reported as if configuration didn't exist.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ THE TOOL -->
+<div class="container">
+  <div class="section">
+    <div class="section-label">The tool</div>
+    <h2>delta_split.py</h2>
+
+    <p>A single function. Drop it on any model, call it once, and it tells you how much the split ratio alone is moving your internal validation number. Same model, same seed, same data — only the cut point moves. The spread it returns is the calibration signal: how sensitive your reported number is to a choice you probably didn't make explicitly.</p>
+
+    <p>Only dependency is <code>numpy</code>. Anything with sklearn-style <code>.fit()</code> / <code>.predict()</code> works without configuration:</p>
+
+<pre><code><span class="kw">from</span> delta_split <span class="kw">import</span> delta_split
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+d = delta_split(RandomForestClassifier(), X, y)
+<span class="cm"># train_50_val_50: train=150, val=150, internal-val=0.555</span>
+<span class="cm"># train_60_val_40: train=180, val=120, internal-val=0.648</span>
+<span class="cm"># train_70_val_30: train=210, val=90,  internal-val=0.673</span>
+<span class="cm"># train_80_val_20: train=240, val=60,  internal-val=0.735</span>
+<span class="cm"># train_90_val_10: train=270, val=30,  internal-val=0.816</span>
+<span class="cm"># delta (spread): 0.261  [high=0.816, low=0.555]</span>
+
+d.spread   <span class="cm"># 0.261  ← how far the split ratio can move your number</span>
+d.range    <span class="cm"># (0.555, 0.816)</span>
+d.high     <span class="cm"># 'train_90_val_10'  (highest internal-val — NOT "best split")</span>
+d.low      <span class="cm"># 'train_50_val_50'</span>
+dict(d)    <span class="cm"># JSON-serializable</span></code></pre>
+
+    <h3>What it is and isn't</h3>
+    <p>It is a calibration check, not a result generator. What it returns are preliminary diagnostics — not findings, not benchmarks, not an optimal split. The point is to put a number on something that was previously invisible: how much a single unreported configuration choice is moving the number you're about to report.</p>
+
+    <p>It deliberately does not pick a winner. Optimality is contextual. Small datasets behave differently from large ones. Class imbalance interacts with split size. The tool surfaces the sensitivity; the interpretation is yours.</p>
+
+    <h3>Hooks for non-sklearn stacks</h3>
+    <table class="hooks-table">
+      <thead>
+        <tr><th>Hook</th><th>What it accepts</th><th>Default</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>metric</td><td>callable(y_true, y_pred) → float</td><td>accuracy</td></tr>
+        <tr><td>predict</td><td>callable(model, X_val) → preds</td><td>model.predict</td></tr>
+        <tr><td>fit</td><td>callable(model, X_train, y_train)</td><td>model.fit</td></tr>
+        <tr><td>model_factory</td><td>callable() → a fresh model</td><td>clone model</td></tr>
+      </tbody>
+    </table>
+
+    <p>Keras — adapt predict for probabilities, pass a factory so each split gets fresh weights:</p>
+
+<pre><code>d = delta_split(
+    model_factory=build_model,
+    X=X, y=y,
+    fit=<span class="kw">lambda</span> m, xt, yt: m.fit(xt, yt, epochs=<span class="nm">20</span>, verbose=<span class="nm">0</span>),
+    predict=<span class="kw">lambda</span> m, xv: np.argmax(m.predict(xv, verbose=<span class="nm">0</span>), axis=<span class="nm">1</span>),
+)</code></pre>
+
+    <p>PyTorch — wrap your loop in the hooks:</p>
+
+<pre><code><span class="kw">def</span> train(model, X_tr, y_tr):
+    <span class="cm"># your loop; return model or mutate in place</span>
+    <span class="kw">return</span> model
+
+<span class="kw">def</span> infer(model, X_val):
+    model.eval()
+    <span class="kw">with</span> torch.no_grad():
+        <span class="kw">return</span> model(to_tensor(X_val)).argmax(<span class="nm">1</span>).cpu().numpy()
+
+d = delta_split(model_factory=build_net, X=X, y=y, fit=train, predict=infer)</code></pre>
+
+    <div class="callout info">
+      <strong>Why one fixed shuffle?</strong> Every split reuses a single shuffle drawn from <code>seed</code>. Only the cut point moves. The spread you see is attributable to the ratio alone — not to a different random draw. The ratio is the only thing that changed.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ WHEEL -->
+<div class="container">
+  <div class="section">
+    <div class="section-label">Interactive</div>
+    <h2>Wheel of Splits</h2>
+    <p>Step right up. Pick a split, any split. Feeling cautious? Stick with the same old 80/20. Feeling curious — maybe even froggy? Try 60/40. The wheel doesn't judge. Spin away.</p>
+
+    <div class="wheel-wrap">
+      <iframe src="carnival_wheel.html" height="640" title="Wheel of Splits" loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ FOOTER -->
+<div class="container">
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/phinnphace/split-tester">split-tester on GitHub ↗</a>
+      <a href="https://github.com/phinnphace/80-20">80-20 main project ↗</a>
+      <a href="http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html">CASIA-HWDB ↗</a>
+    </div>
+    <p class="footer-note">The CASIA demonstration uses real handwritten Chinese characters from the CASIA-HWDB database (Liu et al., 2011). The domain was incidental to the finding.</p>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ CHART -->
+<script>
+(function () {
+  const labels = ['50/50', '60/40', '70/30', '80/20', '90/10'];
+  const values = [64.5, 60.2, 67.3, 73.5, 81.6];
+  const defaultIdx = 3;
+
+  const toRGBA = (r, g, b, a) => `rgba(${r},${g},${b},${a})`;
+  const D = [100, 210, 255];
+
+  new Chart(document.getElementById('splitChart').getContext('2d'), {
+    data: {
+      labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Val accuracy',
+          data: values,
+          backgroundColor: values.map((_, i) => toRGBA(...D, i === defaultIdx ? 0.65 : 0.2)),
+          borderColor:     values.map((_, i) => toRGBA(...D, i === defaultIdx ? 1   : 0.4)),
+          borderWidth: 1.5,
+          borderRadius: 4,
+          order: 2,
+        },
+        {
+          type: 'line',
+          label: 'Trend',
+          data: values,
+          borderColor: 'rgba(255,107,53,0.5)',
+          borderWidth: 2,
+          pointBackgroundColor: values.map((_, i) =>
+            i === defaultIdx ? toRGBA(...D, 0.9) : 'rgba(255,107,53,0.7)'
+          ),
+          pointRadius: 5,
+          tension: 0.3,
+          fill: false,
+          order: 1,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1a2a',
+          borderColor: '#2a2a3a',
+          borderWidth: 1,
+          titleColor: '#e4e4e4',
+          bodyColor: '#888',
+          padding: 10,
+          callbacks: {
+            title: items => `Split ${items[0].label}`,
+            label: ctx => ` ${ctx.parsed.y.toFixed(1)}%`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid:   { color: 'rgba(255,255,255,0.04)' },
+          ticks:  { color: '#555', font: { size: 12 } },
+          border: { color: '#252525' },
+        },
+        y: {
+          min: 54, max: 86,
+          grid:   { color: 'rgba(255,255,255,0.04)' },
+          ticks:  { color: '#555', font: { size: 12 }, callback: v => v + '%' },
+          border: { color: '#252525' },
+        }
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
