@@ -62,7 +62,7 @@ dict(d)    # plain dict, JSON-serializable
 ```
 
 ### Technique-sticky, not framework-agnostic
-Where Ml goes (an ever increasing expanse of domains, this goes with)
+Where Ml goes (an ever increasing expanse of domains) , this goes with
 It sticks into *your* workflow through optional hooks — the headline call stays a one-liner:
 
 | hook | what it is | default |
