@@ -2,11 +2,14 @@
 
 ## Where this comes from
 
-This tool emerged from a side quest in a larger experiment on contextual visual learning. I was training small CNNs (93K parameters) to recognize the Chinese character 打 (dǎ) against five visually similar distractors, using real handwriting from the [CASIA database](http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html).
+This tool emerged from a long standing inner rumbling about the de facto "80/20 test/train/val" machine learning split. Even now, this output is a side quest in a larger experiment on contextual visual learning. I was training small CNNs (93K parameters) to recognize the Chinese character 打 (dǎ) against five visually similar distractors, using real handwriting from the [CASIA database](http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html).
 
-While testing different train/validation splits on identical models—same architecture, same seed, same data—I noticed the standard 80/20 default was not neutral. Validation accuracy swung by over 21 percentage points depending only on where the split boundary fell.
+While testing different train/validation splits on identical models—same architecture, same seed, same data— this was a good opportunity to jump into this larger and more salient question.
+A chronic error I see in ml is mistaking internal validation for results. At best, internal validation is a calibration step.  
+Validation accuracy swung by over 21 percentage points depending only on where the split boundary fell.
 
 That finding had nothing to do with Chinese characters specifically. It was about a default everyone inherits and nobody tests.
+I invite you explore, employ, question.
 
 ## What this demonstrates
 
