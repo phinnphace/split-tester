@@ -79,8 +79,6 @@ dict(d)    # plain dict, JSON-serializable
 
 ### Technique-sticky, not framework-agnostic
 
-=======
-
 Wherever ML goes — an ever-increasing expanse of domains — this goes with it.
 
 It sticks into *your* workflow through optional hooks — the headline call stays a one-liner:
