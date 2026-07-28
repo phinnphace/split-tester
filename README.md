@@ -78,12 +78,11 @@ dict(d)    # plain dict, JSON-serializable
 ```
 
 ### Technique-sticky, not framework-agnostic
-<<<<<<< HEAD
 Where Ml goes (an ever increasing expanse of domains, this goes with)
 =======
 
 Wherever ML goes — an ever-increasing expanse of domains — this goes with it.
->>>>>>> 8d6b1a4 (add showcase page, vercel config, wheel text fix)
+
 It sticks into *your* workflow through optional hooks — the headline call stays a one-liner:
 
 | hook | what it is | default |
