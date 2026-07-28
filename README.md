@@ -78,7 +78,7 @@ dict(d)    # plain dict, JSON-serializable
 ```
 
 ### Technique-sticky, not framework-agnostic
-Where Ml goes (an ever increasing expanse of domains, this goes with)
+
 =======
 
 Wherever ML goes — an ever-increasing expanse of domains — this goes with it.
