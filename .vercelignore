@@ -1,0 +1,18 @@
+# Vercel serves this repo with outputDirectory ".", i.e. the repo root is the
+# web root. Without this file EVERYTHING is publicly fetchable — sample_data.zip
+# (591 KB of CASIA images), docs/project_notes/, CLAUDE.md, the Python sources.
+#
+# Allowlist, not denylist: exclude everything, then re-admit only the two files
+# the showcase page actually needs. Anything added to the repo later stays out
+# of the deploy until it is named here on purpose.
+*
+
+# The showcase page — the Vercel app itself (vercel.json rewrites / to this).
+!index.html
+
+# Loaded by index.html in an iframe (<iframe src="carnival_wheel.html">).
+# Also read at root by app.py, which is why it is not moved into a public/ dir.
+!carnival_wheel.html
+
+# Vercel's own config must reach the build for the rewrite rule to apply.
+!vercel.json
