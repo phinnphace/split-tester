@@ -361,7 +361,7 @@
   <div class="hero">
     <div class="hero-eyebrow">split-tester · side-quest from 80-20</div>
     <h1>Internal validation is not a result. It's a calibration.</h1>
-    <p class="hero-sub">The number your model reports depends on choices you didn't report. The train/val split ratio is one of them — inherited from convention, almost never tested, and capable of moving your accuracy by more than 20 points.</p>
+    <p class="hero-sub">The number your model reports depends on choices you didn't report. The train/val split ratio is one of them — inherited from convention, rarely  tested, and your choice of split/test ratio determines the outcome.</p>
     <div class="hero-links">
       <a href="https://github.com/phinnphace/split-tester">GitHub ↗</a>
       <a href="https://github.com/phinnphace/80-20">80-20 main project ↗</a>
@@ -377,15 +377,15 @@
     <div class="section-label">The problem</div>
     <h2>When a diagnostic gets reported as a finding</h2>
 
-    <p class="lede">Machine learning practitioners regularly report internal validation accuracy as if it were an empirical result. It isn't. It's a measurement of how the model performs on one particular slice of one particular dataset on one particular day — shaped by configuration choices that were never made explicit.</p>
+    <p class="lede">Machine learning practitioners regularly report internal validation as if it were an empirical result. It isn't. It's a measurement of how the model performs on one particular slice of one particular dataset on one particular day — shaped by configuration choices that were never made explicit.</p>
 
-    <p>The specific slice is determined by the train/val split. The specific configuration includes the split ratio — what fraction of the data is reserved for validation. That ratio is almost always 80/20, not because it was derived from theory, not because it was validated against alternatives, but because it was in the textbook, which inherited it from the previous textbook, which inherited it from practice that predates modern datasets by decades.</p>
+    <p>The specific slice is determined by the train/val split. The specific configuration includes the split ratio — what fraction of the data is reserved for "validation". That ratio is almost always 80/20, not because it was derived experimentally on your data, not because it was validated against alternatives, but because it was in the textbook, which inherited it from the previous textbook/journal, which inherited it from practices that coalesced before the cost of computation allowed better.</p>
 
     <div class="pullquote">
       The number you report depends on where you drew a line. If you didn't test where you drew it, you don't know what you reported.
     </div>
 
-    <p>This is not a fringe case. It is the default condition. Internal validation accuracy — the number that shows up in papers, blog posts, model cards, and production dashboards — is at best a calibration diagnostic. It tells you the data behaved that day. It tells you the cat didn't spill coffee on the GPU. It does not tell you how the model generalizes, because generalization requires external validation that most workflows never reach.</p>
+    <p>This is not a fringe case. It is the default condition. Internal validation — the number that shows up in papers, blog posts, model cards, and production dashboards — is at best a calibration diagnostic. It tells you the data behaved that day. It tells you the cat didn't spill coffee on the GPU. It does not tell you how the model generalizes, because generalization requires external validation that most workflows never reach.</p>
 
     <p>The split ratio is one unchecked lever among several. This project focuses on it specifically because it is the most tractable: it's a single scalar, it's reproducible, and it's invisible to the reader of any paper that doesn't explicitly report it.</p>
   </div>
@@ -397,11 +397,25 @@
     <div class="section-label">Historical context</div>
     <h2>How 80/20 became the default nobody questions</h2>
 
-    <p>The 80/20 split did not emerge from ML research. It was not empirically optimized. It predates modern neural networks, large-scale datasets, and most of the domains where it is now applied without modification.</p>
+    <p>The 80/20 split did not emerge from the domain of ML.<p>
+     
+    <p>Tracing exactly when and how this specific ratiobecame entrenched — across textbooks, benchmark datasets, standard library defaults, and reproducibility norms — is ongoing research. What is already clear is that the ratio took hold in place of the methodology that should have accompanied it. The how and why in the original literature. They did not travel well.</p> Internal Validation (The 80/20 Split): You build the model on a dataset and test it on a held-out portion of that exact same dataset. This only proves that the model functions on data collected under the exact same parameters, temporal conditions, and systemic biases.
 
-    <p>Early practice — when datasets were small enough that cross-validation was computationally expensive — required a single held-out set. The choice of how large to make it was pragmatic, not principled. A round number. A number that left enough data for training without making the validation set trivially small. 80/20 was convenient. It fit on a page. It became a worked example. Worked examples become defaults. Defaults become invisible.</p>
+     <p> External Validation: You take the finalized model and apply it to a completely independent cohort—patients from a different hospital network, or environmental surveillance data from a different state or decade. This proves the model actually learned the underlying phenomenon, not just the artifacts of the local dataset.
 
-    <p>Tracing exactly when and how this specific ratio became entrenched — across textbooks, benchmark datasets, standard library defaults, and reproducibility norms — is ongoing research. What is already clear is that the ratio spread faster than the caveats that should have accompanied it. Those caveats were present in the original literature. They did not travel well.</p>
+    </p>By adopting the 80/20 split from early business intelligence, the ML community effectively truncated the scientific method. They took an internal validation tool and began treating it as if it satisfied the requirement for external validation.
+
+    </p>It predates modern neural networks, large-scale datasets, and most of the domains where it is now applied without modification. Ironically, One of the earliest uses I can attribute the inkling of this methodolgy comes from Larson in 1931. The irony is because if you are unfamiliar with Larson he is where we get clinical standards and validation in medicine. The phrase' "evidence-based" is attributed to him. </p>
+
+    <p>The "Benchmark, Publish, Repeat" Cycle — This conflation is the engine of the ML publication machine. When researchers use a standardized corpus (like the Penn Treebank in the Brill and Wu paper) the 20% test set is treated as the ultimate proving ground.Because the 20% holdout comes from the exact same distribution as the 80% training data, it is essentially a closed loop. The algorithm is never actually tested against the chaotic, shifting reality of the real world.
+
+    </p>validation set trivially small.  A model achieves "State-of-the-Art" (SOTA) status, gets published, and is treated as a solved problem. But when that same model is deployed in a high-stakes pipeline—say, processing clinical diagnostic data or evaluating vulnerability indices across new geographic census tracts—it collapses. It was never externally validated; it was just highly optimized for a specific, isolated matrix. 
+    
+    <p> When a marketing team predicts direct-mail response rates, a closed-loop 80/20 internal validation is fine. If the model decays when applied externally to a new demographic next year, the worst outcome is a slight dip in ROI.<p>
+      
+    <p> 80/20 was convenient. It fit on a page. It became a worked example. Worked examples become defaults. Defaults become invisible.</p>
+
+    
 
     <div class="callout info">
       <strong>The rule you inherited was never a rule.</strong> It was a heuristic for a data regime that no longer exists, applied with the confidence of a law to datasets that would have been unimaginable when the heuristic was first written down.
@@ -415,7 +429,7 @@
 <div class="container">
   <div class="section">
     <div class="section-label">A demonstration</div>
-    <h2>One model. One dataset. Five ratios. Five different answers.</h2>
+    <h2>One model. One dataset. Five ratios. WHat happens when you use a different splut ratio. I am only sharing one, because the outcome does not change. I hope that much is clear.</h2>
 
     <p>The domain is incidental. What follows used real handwritten Chinese characters from the <a href="http://www.nlpr.ia.ac.cn/databases/handwriting/Home.html">CASIA-HWDB database</a> — 40 images, a Random Forest classifier, and a fixed seed. The characters could have been anything. The result would have been structurally identical.</p>
 
