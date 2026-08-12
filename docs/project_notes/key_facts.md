@@ -1,5 +1,18 @@
 # Key Facts
 
+## Public paper catalog
+
+**Value / Detail:**
+`paper-catalog.html` is the public evidence-browser route at `/paper-catalog`.
+`paper_catalog_data.js` is a generated read-only snapshot of the 45 registered citation
+records and their 21-field protocol responses. Regenerate it from the working SQLite
+database with `scripts/export_paper_catalog.py`; do not hand-edit the generated data file.
+The working database is intentionally not committed here.
+
+**Last verified:** 2026-08-12
+
+---
+
 ## The three spaces (the nesting doll)
 
 **Value / Detail:**
