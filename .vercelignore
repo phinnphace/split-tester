@@ -14,5 +14,9 @@
 # Also read at root by app.py, which is why it is not moved into a public/ dir.
 !carnival_wheel.html
 
+# Paper Trail — public catalog interface and its generated, read-only evidence snapshot.
+!paper-catalog.html
+!paper_catalog_data.js
+
 # Vercel's own config must reach the build for the rewrite rule to apply.
 !vercel.json
