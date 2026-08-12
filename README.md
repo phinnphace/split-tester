@@ -41,6 +41,13 @@ shuffle draw. That gap between two "correct" runs is itself the point this repo 
 Prefer to just spin? The Wheel of Splits is live at
 [go.dataacorns.com/80-20/carnival-wheel](https://go.dataacorns.com/80-20/carnival-wheel).
 
+The paper-audit side of the project is available at
+[go.dataacorns.com/80-20/paper-catalog](https://go.dataacorns.com/80-20/paper-catalog).
+It publishes a source-bound snapshot of the 45 registered citation records: an interactive
+cluster map, a filterable paper index, and the same 21-field evidence protocol for every
+paper. The browser data file is generated from the project SQLite database with
+`scripts/export_paper_catalog.py`; it is a snapshot, not a second editable database.
+
 A 40-image sample of the actual dataset is included in `sample_data.zip`.
 Each image is a 100×100 grayscale PNG: isolated characters (Condition A)
 or two-character bigrams (Condition B), labeled as 打 (positive) or a

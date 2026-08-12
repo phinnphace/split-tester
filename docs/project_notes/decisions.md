@@ -1,5 +1,28 @@
 # Architectural Decisions
 
+## Publish the paper audit as a sibling static route with a generated data snapshot
+
+**Date:** 2026-08-12
+**Status:** Accepted
+
+**Context:**
+The 80–20 project now includes a fixed, 45-record citation corpus reviewed under a shared
+21-field protocol. The working evidence remains in a relational SQLite database outside
+this public repository. Readers need an inspectable map and evidence index without making
+the public web page a second editable database.
+
+**Decision:**
+Publish the catalog at `/paper-catalog` within the existing Vercel app. Keep the main
+split-ratio page and carnival wheel intact. Export a static, source-bound browser snapshot
+to `paper_catalog_data.js` with `scripts/export_paper_catalog.py`; render the map, filters,
+and per-record protocol detail in `paper-catalog.html`.
+
+**Consequences:**
+- The SQLite database remains the working source of truth.
+- Public updates are deliberate snapshots, regenerated and reviewed before deployment.
+- The public payload excludes correspondence and local source-file paths.
+- The map is descriptive grouping, not a statistical test or automated misconduct verdict.
+
 ## Embed the wheel as a compiled single-file asset, inlined via components.html
 
 **Date:** 2026-07-22 (recorded; decision made over prior commits)
