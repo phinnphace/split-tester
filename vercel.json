@@ -4,6 +4,7 @@
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/paper-catalog", "destination": "/paper-catalog.html" },
+    { "source": "/paper-trail-map", "destination": "/paper-trail-map.html" },
     { "source": "/carnival-wheel", "destination": "/carnival_wheel.html" }
   ]
 }
