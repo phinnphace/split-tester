@@ -43,10 +43,10 @@ Prefer to just spin? The Wheel of Splits is live at
 
 The paper-audit side of the project is available at
 [go.dataacorns.com/80-20/paper-catalog](https://go.dataacorns.com/80-20/paper-catalog).
-It publishes a source-bound snapshot of the 45 registered citation records: an interactive
-cluster map, a filterable paper index, and the same 21-field evidence protocol for every
-paper. The browser data file is generated from the project SQLite database with
-`scripts/export_paper_catalog.py`; it is a snapshot, not a second editable database.
+Its prior corpus and all inherited public outputs were retired on 21 August 2026 after a
+reference document was found in the initial source set. The route now records the correction
+and clean-rebuild status. Git history is preserved; see
+[`CORRECTION-PAPER-TRAIL-2026-08-21.md`](CORRECTION-PAPER-TRAIL-2026-08-21.md).
 
 A 40-image sample of the actual dataset is included in `sample_data.zip`.
 Each image is a 100×100 grayscale PNG: isolated characters (Condition A)

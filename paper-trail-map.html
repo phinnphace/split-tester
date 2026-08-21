@@ -1,47 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A living map of recurring research patterns in the Paper Trail citation corpus.">
-<title>Paper Trail — Working Corpus Map</title>
-<style>
-  :root{--bg:#0d0d0d;--text:#e8e5df;--soft:#b9b5ae;--muted:#7d7973;--line:#343434;--orange:#ff6b35;--blue:#64d2ff;--purple:#c084fc;--gold:#f5b942;--green:#4ade80}
-  *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit}
-  .widget{width:min(100%,1100px);margin:auto;padding:24px 26px 20px}.mast{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;border-bottom:1px solid #292929;padding-bottom:18px}.eyebrow{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--orange);margin-bottom:7px}.mast h1{font-size:clamp(22px,4vw,34px);letter-spacing:-.035em;line-height:1;margin:0}.status{font-size:11px;color:var(--muted);line-height:1.4;text-align:right;max-width:260px}.status strong{color:var(--soft);font-weight:550}
-  .stage{display:grid;grid-template-columns:minmax(0,1fr) 260px;min-height:530px}.map-wrap{position:relative;background:radial-gradient(circle at 50% 45%,#171717 0,#0d0d0d 68%)}svg{display:block;width:100%;height:530px}.link{stroke:var(--line);transition:opacity .22s}.link.muted{opacity:.06}.node{cursor:pointer;transition:opacity .22s}.node circle{stroke-width:2;transition:stroke-width .15s,filter .15s}.node:hover circle,.node:focus circle{stroke-width:4;filter:brightness(1.2)}.node:focus{outline:none}.node.selected circle{stroke:#fff;stroke-width:4}.node.muted{opacity:.14}.node text{fill:var(--text);text-anchor:middle;pointer-events:none;font-size:12px;font-weight:620}.node .count{fill:var(--muted);font-size:10px;font-weight:450}
-  .inspect{border-left:1px solid #292929;padding:28px 0 22px 24px;display:flex;flex-direction:column}.kind{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--orange)}.inspect h2{font-size:21px;line-height:1.16;letter-spacing:-.025em;margin:11px 0 13px}.inspect p{font-size:13px;line-height:1.55;color:var(--muted);margin:0 0 12px}.inspect .refs{color:var(--soft);margin-top:auto}.foot{border-top:1px solid #292929;padding-top:14px;display:flex;justify-content:space-between;align-items:center;gap:18px;color:var(--muted);font-size:11px}.legend{display:flex;gap:13px;flex-wrap:wrap}.legend span{display:flex;align-items:center;gap:5px}.dot{width:7px;height:7px;border-radius:50%}.full{color:var(--blue);text-decoration:none;white-space:nowrap}.full:hover{text-decoration:underline}
-  @media(max-width:720px){.widget{padding:18px}.mast{display:block}.status{text-align:left;margin-top:10px}.stage{grid-template-columns:1fr}.map-wrap,svg{height:430px}.inspect{border-left:0;border-top:1px solid #292929;padding:19px 0;min-height:205px}.inspect .refs{margin-top:5px}.foot{align-items:flex-start;flex-direction:column}}
-  @media(prefers-reduced-motion:reduce){.node,.link,.node circle{transition:none}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Paper Trail rebuild status widget.">
+  <title>Paper Trail — Rebuild in Progress</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0d0d0d;--panel:#151515;--line:#2a2a2a;--text:#eeeae3;--muted:#a29d95;--accent:#ff6b35;--link:#64d2ff}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.widget{min-height:100vh;padding:clamp(24px,5vw,52px);display:flex;align-items:center}.card{width:min(860px,100%);margin:auto;border:1px solid var(--line);background:var(--panel);padding:clamp(28px,6vw,58px)}
+    .eyebrow{color:var(--accent);font-size:11px;letter-spacing:.13em;text-transform:uppercase}h1{font-size:clamp(34px,7vw,64px);letter-spacing:-.05em;line-height:.96;margin:18px 0 24px}.lede{font-size:clamp(16px,2.5vw,21px);line-height:1.55;color:#c7c2ba;max-width:700px}.rule{height:1px;background:var(--line);margin:34px 0}.status{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;color:var(--muted);font-size:13px;line-height:1.5}.status strong{color:var(--text);display:block;font-size:15px}.full{color:var(--link);text-decoration:none;white-space:nowrap}.full:hover{text-decoration:underline}@media(max-width:620px){.status{display:block}.full{display:inline-block;margin-top:20px}}
+  </style>
 </head>
 <body>
-<main class="widget">
-  <header class="mast"><div><div class="eyebrow">Paper Trail · working map</div><h1>Tracing the recurring structure.</h1></div><div class="status"><strong>Analysis in progress.</strong><br>45 registered records · 44 full texts · one shared protocol</div></header>
-  <div class="stage">
-    <div class="map-wrap"><svg id="map" viewBox="0 0 800 560" role="img" aria-labelledby="mapTitle mapDesc"><title id="mapTitle">Paper Trail corpus pattern map</title><desc id="mapDesc">Nine nodes represent recurring task, method, reporting, and authorship patterns. Node size represents paper count. Lines connect patterns that share papers.</desc><g id="links"></g><g id="nodes"></g></svg></div>
-    <aside class="inspect" id="inspect" aria-live="polite"></aside>
-  </div>
-  <footer class="foot"><div class="legend"><span><i class="dot" style="background:var(--blue)"></i>task/domain</span><span><i class="dot" style="background:var(--purple)"></i>method syntax</span><span><i class="dot" style="background:var(--gold)"></i>evaluation/reporting</span><span><i class="dot" style="background:var(--green)"></i>authorship</span></div><a class="full" href="https://split-tester.vercel.app/paper-catalog" target="_top">Open the evidence catalog →</a></footer>
-</main>
-<script src="paper_catalog_data.js"></script>
-<script>
-(()=>{
-  const data=window.PAPER_CATALOG;
-  const colors={topic:'#64d2ff',method:'#c084fc',evidence:'#f5b942',provenance:'#4ade80'};
-  const kindNames={topic:'Task / domain',method:'Method syntax',evidence:'Evaluation / reporting',provenance:'Authorship'};
-  const kindFor=id=>id.includes('LOCALIZED')||id.includes('LANGUAGE-TO')||id.includes('PHYSIOLOGICAL')||id.includes('BIOMEDICAL')?'topic':id.includes('COMPOUND')||id.includes('SWARM')?'method':id.includes('AUTHOR')?'provenance':'evidence';
-  const positions={'XPP-LOCALIZED-SIGN-LANGUAGE':[155,135],'XPP-LANGUAGE-TO-CLASSIFICATION':[320,218],'XPP-HIGH-SCORE-WEAK-INDEPENDENCE':[510,145],'XPP-REPORTING-MISMATCHES':[655,285],'XPP-COMPOUND-MODEL-NAMING':[442,365],'XPP-SWARM-EVOLUTIONARY-OPTIMIZATION':[610,485],'XPP-PHYSIOLOGICAL-HAND-SENSING':[205,405],'XPP-BIOMEDICAL-ESCALATION':[335,500],'XPP-AUTHOR-MICROCLUSTERS':[70,300]};
-  const labels={'XPP-LOCALIZED-SIGN-LANGUAGE':['national /','multilingual sign'],'XPP-LANGUAGE-TO-CLASSIFICATION':['language →','isolated labels'],'XPP-HIGH-SCORE-WEAK-INDEPENDENCE':['95–100%','independence unclear'],'XPP-REPORTING-MISMATCHES':['output / reporting','mismatch'],'XPP-COMPOUND-MODEL-NAMING':['compound','model stack'],'XPP-SWARM-EVOLUTIONARY-OPTIMIZATION':['swarm · GWO','GA · PSO'],'XPP-PHYSIOLOGICAL-HAND-SENSING':['sEMG · FMG','bioimpedance'],'XPP-BIOMEDICAL-ESCALATION':['biomedical','migration'],'XPP-AUTHOR-MICROCLUSTERS':['repeated author','clusters']};
-  const patterns=data.patterns.map(p=>({...p,kind:kindFor(p.pattern_id),n:p.papers.length}));
-  const links=[];for(let i=0;i<patterns.length;i++)for(let j=i+1;j<patterns.length;j++){const shared=patterns[i].papers.filter(x=>patterns[j].papers.includes(x));if(shared.length)links.push({a:patterns[i],b:patterns[j],shared})}
-  const ns='http://www.w3.org/2000/svg',linkGroup=document.getElementById('links'),nodeGroup=document.getElementById('nodes'),inspect=document.getElementById('inspect');
-  const radius=n=>29+Math.sqrt(n)*7.4;
-  links.forEach(l=>{const line=document.createElementNS(ns,'line'),a=positions[l.a.pattern_id],b=positions[l.b.pattern_id];[['x1',a[0]],['y1',a[1]],['x2',b[0]],['y2',b[1]],['stroke-width',1+l.shared.length]].forEach(([k,v])=>line.setAttribute(k,v));line.classList.add('link');line.dataset.a=l.a.pattern_id;line.dataset.b=l.b.pattern_id;linkGroup.appendChild(line)});
-  patterns.forEach(p=>{const g=document.createElementNS(ns,'g'),pos=positions[p.pattern_id];g.classList.add('node');g.dataset.id=p.pattern_id;g.setAttribute('transform',`translate(${pos[0]},${pos[1]})`);g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',`${p.shared_feature}, ${p.n} papers`);const c=document.createElementNS(ns,'circle');c.setAttribute('r',radius(p.n));c.setAttribute('fill',colors[p.kind]+'22');c.setAttribute('stroke',colors[p.kind]);g.appendChild(c);labels[p.pattern_id].forEach((line,i,arr)=>{const t=document.createElementNS(ns,'text');t.setAttribute('y',(i-(arr.length-1)/2)*16-5);t.textContent=line;g.appendChild(t)});const count=document.createElementNS(ns,'text');count.classList.add('count');count.setAttribute('y',25);count.textContent=`${p.n} papers`;g.appendChild(count);g.addEventListener('click',()=>select(p.pattern_id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(p.pattern_id)}});nodeGroup.appendChild(g)});
-  function select(id){const p=patterns.find(x=>x.pattern_id===id),neighbors=new Set([id]);links.filter(l=>l.a.pattern_id===id||l.b.pattern_id===id).forEach(l=>{neighbors.add(l.a.pattern_id);neighbors.add(l.b.pattern_id)});document.querySelectorAll('.node').forEach(n=>{n.classList.toggle('selected',n.dataset.id===id);n.classList.toggle('muted',!neighbors.has(n.dataset.id))});document.querySelectorAll('.link').forEach(l=>l.classList.toggle('muted',l.dataset.a!==id&&l.dataset.b!==id));inspect.innerHTML=`<div class="kind">${kindNames[p.kind]}</div><h2>${p.shared_feature}</h2><p>${p.evidence_summary}</p><p class="refs">References ${p.papers.join(', ')}</p>`}
-  select('XPP-HIGH-SCORE-WEAK-INDEPENDENCE');
-})();
-</script>
+  <main class="widget">
+    <section class="card">
+      <div class="eyebrow">Paper Trail · correction recorded</div>
+      <h1>The map is being rebuilt from a clean master.</h1>
+      <p class="lede">The prior corpus and all inherited analytical outputs were retired on 21 August 2026 after a reference document was found in the initial source set. Git history remains intact.</p>
+      <div class="rule"></div>
+      <div class="status"><div><strong>No active nodes or paper records</strong>Corrected corpus registration is the next step.</div><a class="full" href="https://split-tester.vercel.app/paper-catalog" target="_top">Read the correction →</a></div>
+    </section>
+  </main>
 </body>
 </html>
