@@ -3,13 +3,12 @@
 ## Public paper catalog
 
 **Value / Detail:**
-`paper-catalog.html` is the public evidence-browser route at `/paper-catalog`.
-`paper_catalog_data.js` is a generated read-only snapshot of the 45 registered citation
-records and their 21-field protocol responses. Regenerate it from the working SQLite
-database with `scripts/export_paper_catalog.py`; do not hand-edit the generated data file.
-The working database is intentionally not committed here.
+`paper-catalog.html` and `paper-trail-map.html` are correction/rebuild pages. The prior
+active corpus, generated browser data, node map, and exporter were retired on 2026-08-21.
+The routes intentionally publish no paper records or analytical results until a clean rebuild
+from the corrected master citation CSV is reviewed. Ordinary Git history is preserved.
 
-**Last verified:** 2026-08-12
+**Last verified:** 2026-08-21
 
 ---
 

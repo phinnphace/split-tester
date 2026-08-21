@@ -3,25 +3,38 @@
 ## Publish the paper audit as a sibling static route with a generated data snapshot
 
 **Date:** 2026-08-12
+**Status:** Superseded 2026-08-21 by the full corpus retirement below
+
+**Context:**
+An earlier Paper Trail corpus and its public evidence interface were published at this route.
+
+**Decision:**
+This decision is retained only as a pointer to repository history. Its active implementation
+and derived data were retired under the 2026-08-21 decision below.
+
+**Consequences:**
+- No former corpus detail is carried forward in this active decision log.
+
+## Retire the active Paper Trail corpus and rebuild from a corrected master
+
+**Date:** 2026-08-21
 **Status:** Accepted
 
 **Context:**
-The 80–20 project now includes a fixed, 45-record citation corpus reviewed under a shared
-21-field protocol. The working evidence remains in a relational SQLite database outside
-this public repository. Readers need an inspectable map and evidence index without making
-the public web page a second editable database.
+A reference document was mistakenly included in the initial corpus. Although it was removed
+and affected analyses were rerun, later work still descended from the original master input.
 
 **Decision:**
-Publish the catalog at `/paper-catalog` within the existing Vercel app. Keep the main
-split-ratio page and carnival wheel intact. Export a static, source-bound browser snapshot
-to `paper_catalog_data.js` with `scripts/export_paper_catalog.py`; render the map, filters,
-and per-record protocol detail in `paper-catalog.html`.
+Purge the active corpus and every inherited local and public output. Retain only the generic
+schema and review protocol. Keep the public routes active as correction/rebuild notices, and
+preserve ordinary Git history rather than rewriting it. Begin again only from the corrected
+master citation CSV.
 
 **Consequences:**
-- The SQLite database remains the working source of truth.
-- Public updates are deliberate snapshots, regenerated and reviewed before deployment.
-- The public payload excludes correspondence and local source-file paths.
-- The map is descriptive grouping, not a statistical test or automated misconduct verdict.
+- No prior paper records, node memberships, summaries, or analytical outputs remain active.
+- The generated browser data and its exporter are removed.
+- Earlier public versions remain inspectable in Git history.
+- Every citation in the corrected master will be registered before review begins.
 
 ## Embed the wheel as a compiled single-file asset, inlined via components.html
 

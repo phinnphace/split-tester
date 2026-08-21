@@ -1,115 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="A source-bound evidence catalog of 45 cited records connected through recurring sign-language, gesture-recognition, optimization, and reporting patterns.">
-<title>Paper Trail — The 80–20 Project</title>
-<style>
-  :root {
-    --bg:#0d0d0d; --surface:#151515; --surface-2:#1b1b1b; --border:#292929;
-    --text:#e8e5df; --muted:#85817b; --soft:#b9b5ae; --accent:#ff6b35;
-    --data:#64d2ff; --method:#c084fc; --evidence:#f5b942; --author:#4ade80;
-  }
-  *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-  button,input,select{font:inherit} button{color:inherit} a{color:var(--data);text-decoration:none} a:hover{text-decoration:underline}
-  .shell{max-width:1320px;margin:auto;padding:0 28px}.topbar{height:66px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-  .breadcrumb{display:flex;align-items:center;gap:9px;font-size:14px;white-space:nowrap}.breadcrumb a{color:var(--text);font-weight:650;letter-spacing:-.02em}.breadcrumb a:hover{color:var(--data);text-decoration:none}.crumb-separator{color:#444}.crumb-current{color:var(--muted)}.toplinks{display:flex;gap:20px;font-size:13px}.toplinks a{color:var(--muted)}
-  .hero{padding:72px 0 52px;border-bottom:1px solid var(--border)}.eyebrow,.section-label,.kind{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-  h1{font-size:clamp(46px,8vw,104px);letter-spacing:-.065em;line-height:.87;margin:24px 0 28px;max-width:940px}.dek{font-size:clamp(18px,2.2vw,25px);line-height:1.45;color:var(--soft);max-width:770px;margin:0}
-  .scope{display:flex;gap:34px;flex-wrap:wrap;margin-top:46px;padding-top:24px;border-top:1px solid var(--border)}.scope strong{display:block;font-size:29px;line-height:1;font-variant-numeric:tabular-nums}.scope span{font-size:12px;color:var(--muted)}
-  .notice{margin-top:24px;border-left:2px solid var(--accent);padding:3px 0 3px 16px;color:var(--muted);font-size:13px;max-width:870px;line-height:1.6}.notice strong{color:var(--soft)}
-  section{padding:70px 0;border-bottom:1px solid var(--border)}h2{font-size:clamp(28px,4vw,46px);letter-spacing:-.035em;margin:12px 0 14px}.section-intro{color:var(--muted);max-width:720px;line-height:1.65;margin:0 0 32px}
-  .map-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:stretch}.map-panel{min-height:670px;position:relative;background:radial-gradient(circle at 50% 45%,#171717 0,#0d0d0d 68%)}
-  #clusterMap{display:block;width:100%;height:670px}.link{stroke:#343434}.node{cursor:pointer;transition:opacity .2s}.node circle{stroke-width:2}.node text{fill:var(--text);text-anchor:middle;pointer-events:none;font-size:12px;font-weight:600}.node .count{fill:var(--muted);font-size:10px;font-weight:450}.node.muted{opacity:.14}.link.muted{opacity:.06}.node.selected circle{stroke:#fff;stroke-width:3}
-  .inspector{border-left:1px solid var(--border);padding:28px 0 20px 28px;display:flex;flex-direction:column}.inspector h3{font-size:25px;line-height:1.15;margin:13px 0 15px;letter-spacing:-.025em}.inspector p{color:var(--muted);line-height:1.6;font-size:14px}.paper-refs{margin-top:auto;padding-top:24px;color:var(--soft)!important}.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;color:var(--muted);font-size:12px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:9px;height:9px;border-radius:50%}
-  .filterbar{display:grid;grid-template-columns:minmax(240px,1fr) 220px 220px;gap:10px;margin:24px 0 18px;position:sticky;top:8px;z-index:3;background:rgba(13,13,13,.93);backdrop-filter:blur(14px);padding:10px 0}.filterbar input,.filterbar select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:12px 13px;outline:none}.filterbar :focus{border-color:#555}.result-count{font-size:12px;color:var(--muted);margin-bottom:8px}
-  .paper-list{border-top:1px solid var(--border)}.paper-row{display:grid;grid-template-columns:62px minmax(0,1.5fr) minmax(180px,.65fr) 88px;gap:18px;padding:20px 4px;border-bottom:1px solid var(--border);cursor:pointer;align-items:start;transition:background .15s}.paper-row:hover{background:#121212}.ref{font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums;padding-top:3px}.paper-title{font-weight:590;line-height:1.35}.paper-meta,.tags{font-size:12px;color:var(--muted);line-height:1.5}.tags{display:flex;gap:5px;flex-wrap:wrap}.tag{border:1px solid var(--border);padding:2px 6px;border-radius:3px}.evidence-level{text-align:right;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-  dialog{width:min(920px,calc(100vw - 30px));height:min(820px,calc(100vh - 30px));border:1px solid #373737;border-radius:10px;background:var(--surface);color:var(--text);padding:0;box-shadow:0 24px 90px #000b}dialog::backdrop{background:#000b;backdrop-filter:blur(4px)}.dialog-head{position:sticky;top:0;background:rgba(21,21,21,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:24px 28px;z-index:1}.close{position:absolute;right:18px;top:18px;background:none;border:1px solid var(--border);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:20px}.dialog-head h3{font-size:25px;line-height:1.25;margin:8px 48px 8px 0}.dialog-body{padding:8px 28px 34px}.field{display:grid;grid-template-columns:190px 110px minmax(0,1fr);gap:18px;padding:16px 0;border-bottom:1px solid var(--border)}.field-name{font-size:12px;color:var(--soft)}.status{font-size:10px;text-transform:uppercase;letter-spacing:.07em}.recorded{color:var(--author)}.not_stated{color:#f87171}.unclear{color:var(--evidence)}.not_applicable,.not_assessable{color:var(--muted)}.field-value{font-size:13px;color:var(--soft);line-height:1.55}.dialog-citation{color:var(--muted);font-size:13px;line-height:1.5}.doi-link{display:inline-block;margin-top:6px;font-size:12px}
-  .method{display:grid;grid-template-columns:1fr 1fr;gap:50px}.method h3{font-size:18px;margin:0 0 12px}.method p,.method li{color:var(--muted);line-height:1.65;font-size:14px}.method ul{padding-left:18px}.update-note{font-size:13px;color:var(--muted);margin-top:28px}footer{padding:45px 0 70px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
-  @media(max-width:860px){.map-layout{grid-template-columns:1fr}.map-panel{min-height:560px}#clusterMap{height:560px}.inspector{border-left:0;border-top:1px solid var(--border);padding:22px 0}.paper-refs{margin-top:5px}.filterbar{grid-template-columns:1fr}.paper-row{grid-template-columns:44px 1fr}.paper-row>.tags,.evidence-level{grid-column:2;text-align:left}.method{grid-template-columns:1fr}.field{grid-template-columns:1fr;gap:7px}.field-name{font-weight:600}.dialog-body,.dialog-head{padding-left:20px;padding-right:20px}}
-  @media(max-width:620px){.topbar{height:auto;min-height:66px;padding-top:14px;padding-bottom:14px;align-items:flex-start}.toplinks{gap:13px;flex-wrap:wrap;justify-content:flex-end}.toplinks a[href="#map"],.toplinks a[href="#papers"],.toplinks a[href="#method"]{display:none}}
-  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Paper Trail correction notice and clean-corpus rebuild status.">
+  <title>Paper Trail — Corpus Rebuild</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0d0d0d;--panel:#151515;--line:#2a2a2a;--text:#eeeae3;--muted:#a29d95;--accent:#ff6b35;--link:#64d2ff}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}.shell{width:min(980px,calc(100% - 40px));margin:auto}
+    header{min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);font-size:14px}.crumb{display:flex;gap:9px;align-items:center}.crumb a{color:var(--text);font-weight:650}.sep{color:#555}.current{color:var(--muted)}
+    main{padding:clamp(64px,10vw,120px) 0 96px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.14em;text-transform:uppercase}h1{font-size:clamp(48px,9vw,92px);letter-spacing:-.06em;line-height:.91;margin:22px 0 30px;max-width:800px}
+    .lede{font-size:clamp(19px,2.4vw,26px);line-height:1.5;color:#c7c2ba;max-width:790px}.status{margin:54px 0 0;border:1px solid var(--line);background:var(--panel);padding:clamp(24px,5vw,44px)}
+    .status h2{font-size:24px;margin:0 0 18px}.status p{color:var(--muted);font-size:16px;line-height:1.72;max-width:760px}.status p:last-child{margin-bottom:0}.date{color:var(--text);font-weight:650}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:36px}.step{background:var(--bg);padding:24px}.step span{display:block;color:var(--accent);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:11px}.step strong{font-size:17px;line-height:1.35}.step p{font-size:13px;line-height:1.55;margin-bottom:0}
+    footer{border-top:1px solid var(--line);padding:32px 0 56px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    @media(max-width:700px){.steps{grid-template-columns:1fr}header{align-items:flex-start;padding:18px 0;flex-direction:column}.toplink{align-self:flex-end}}
+  </style>
 </head>
 <body>
-<header class="shell topbar"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="/" aria-label="Return to the 80–20 project">80–20 project</a><span class="crumb-separator" aria-hidden="true">/</span><span class="crumb-current" aria-current="page">Paper Trail</span></nav><nav class="toplinks" aria-label="Paper Trail sections"><a href="#map">Map</a><a href="#papers">Papers</a><a href="#method">Method</a><a href="https://github.com/phinnphace/split-tester">GitHub ↗</a></nav></header>
-<main>
-  <div class="shell hero">
-    <div class="eyebrow">A living evidence catalog</div>
-    <h1>The pattern is the point.</h1>
-    <p class="dek">Forty-five connected citation records, reviewed under one protocol. The map shows recurring research syntax; the index keeps every observation attached to its document of origin.</p>
-    <div class="scope"><div><strong id="corpusCount">45</strong><span>registered records</span></div><div><strong id="fullTextCount">44</strong><span>full texts reviewed</span></div><div><strong id="patternCount">9</strong><span>overlapping clusters</span></div><div><strong>21</strong><span>fields per record</span></div></div>
-    <div class="notice"><strong>Scope:</strong> descriptive evidence mapping, not a statistical hypothesis test and not an automated verdict. “Not stated” means the reviewed source did not state it. It does not prove the event did not occur. First-pass coding remains open to independent review and correction.</div>
-  </div>
-
-  <section id="map"><div class="shell">
-    <div class="section-label">01 / Recurring syntax</div><h2>Where the papers overlap</h2><p class="section-intro">Node area represents the number of papers in a cluster. A line joins clusters that share papers; thicker lines mean more shared membership. Select any node to inspect it.</p>
-    <div class="map-layout"><div class="map-panel"><svg id="clusterMap" viewBox="0 0 900 670" role="img" aria-label="Network of overlapping paper clusters"><g id="links"></g><g id="nodes"></g></svg></div><aside class="inspector" id="inspector"><div class="kind">Evaluation / reporting</div><h3>95–100% with independence unclear</h3><p>Select a node to read the source-bound definition and see which papers connect it to the rest of the corpus.</p><p class="paper-refs">References</p></aside></div>
-    <div class="legend"><span><i class="dot" style="background:var(--data)"></i>Task / domain</span><span><i class="dot" style="background:var(--method)"></i>Method syntax</span><span><i class="dot" style="background:var(--evidence)"></i>Evaluation / reporting</span><span><i class="dot" style="background:var(--author)"></i>Authorship</span></div>
-  </div></section>
-
-  <section id="papers"><div class="shell">
-    <div class="section-label">02 / Evidence index</div><h2>Every record, same questions</h2><p class="section-intro">Nothing was sampled out. Search titles, authors, venues, or extracted evidence; filter by recurring cluster or evidence availability. Open a record to see all 21 fields.</p>
-    <div class="filterbar"><input id="search" type="search" placeholder="Search title, author, venue, or evidence…" aria-label="Search papers"><select id="patternFilter" aria-label="Filter by cluster"><option value="">All clusters</option></select><select id="evidenceFilter" aria-label="Filter by evidence level"><option value="">All evidence levels</option><option value="full_text">Full text</option><option value="citation_only">Citation only</option></select></div>
-    <div class="result-count" id="resultCount"></div><div class="paper-list" id="paperList"></div>
-  </div></section>
-
-  <section id="method"><div class="shell">
-    <div class="section-label">03 / Reading the catalog</div><h2>Structure before interpretation</h2>
-    <div class="method"><div><h3>What was recorded</h3><p>Each registered citation receives the same 21-field protocol: source availability, datasets named and used, split and independence, preprocessing, architecture, optimizer or novelty, hardware and software, outputs, consistency, tested-versus-reported construct, baselines, ablation, code, data, ethics, claim support, and source-bound notes.</p></div><div><h3>What the map does not do</h3><ul><li>It does not infer misconduct from cluster membership.</li><li>It does not convert missing reporting into evidence of absence.</li><li>It does not treat an automated extraction as final adjudication.</li><li>Papers may belong to multiple clusters because the grouping is compositional.</li></ul></div></div>
-    <p class="update-note">Snapshot: 12 August 2026. Forty-four full texts and one citation-only dataset record. The catalog will evolve as reproducibility checks and independent review are added.</p>
-  </div></section>
-</main>
-<footer class="shell"><span>Part of the 80–20 project.</span><span><a href="/">Split-ratio project</a> · <a href="/carnival-wheel">Wheel of Splits</a> · <a href="https://github.com/phinnphace/split-tester">Source repository</a></span></footer>
-
-<dialog id="paperDialog"><div class="dialog-head"><button class="close" aria-label="Close">×</button><div class="kind" id="dialogRef"></div><h3 id="dialogTitle"></h3><div class="dialog-citation" id="dialogCitation"></div></div><div class="dialog-body" id="dialogBody"></div></dialog>
-<script src="paper_catalog_data.js"></script>
-<script>
-(() => {
-  const data=window.PAPER_CATALOG, colors={topic:'#64d2ff',method:'#c084fc',evidence:'#f5b942',provenance:'#4ade80'};
-  const kinds={topic:'Task / domain',method:'Method syntax',evidence:'Evaluation / reporting',provenance:'Authorship'};
-  const kindFor=id=>id.includes('LOCALIZED')||id.includes('LANGUAGE-TO')||id.includes('PHYSIOLOGICAL')||id.includes('BIOMEDICAL')?'topic':id.includes('COMPOUND')||id.includes('SWARM')?'method':id.includes('AUTHOR')?'provenance':'evidence';
-  data.patterns.forEach(p=>{p.kind=kindFor(p.pattern_id);p.n=p.papers.length});
-  document.getElementById('corpusCount').textContent=data.meta.corpus_size;
-  document.getElementById('fullTextCount').textContent=data.meta.full_text_count;
-  document.getElementById('patternCount').textContent=data.meta.pattern_count;
-
-  const positions={
-    'XPP-LOCALIZED-SIGN-LANGUAGE':[186,164],'XPP-LANGUAGE-TO-CLASSIFICATION':[360,250],
-    'XPP-HIGH-SCORE-WEAK-INDEPENDENCE':[566,178],'XPP-REPORTING-MISMATCHES':[702,344],
-    'XPP-COMPOUND-MODEL-NAMING':[490,432],'XPP-SWARM-EVOLUTIONARY-OPTIMIZATION':[674,558],
-    'XPP-PHYSIOLOGICAL-HAND-SENSING':[235,493],'XPP-BIOMEDICAL-ESCALATION':[367,587],
-    'XPP-AUTHOR-MICROCLUSTERS':[90,376]
-  };
-  const labels={
-    'XPP-LOCALIZED-SIGN-LANGUAGE':['national /','multilingual sign'], 'XPP-LANGUAGE-TO-CLASSIFICATION':['language →','isolated labels'],
-    'XPP-HIGH-SCORE-WEAK-INDEPENDENCE':['95–100%','independence unclear'], 'XPP-REPORTING-MISMATCHES':['output / reporting','mismatch'],
-    'XPP-COMPOUND-MODEL-NAMING':['compound','model stack'], 'XPP-SWARM-EVOLUTIONARY-OPTIMIZATION':['swarm · GWO','GA · PSO'],
-    'XPP-PHYSIOLOGICAL-HAND-SENSING':['sEMG · FMG','bioimpedance'], 'XPP-BIOMEDICAL-ESCALATION':['biomedical','migration'],
-    'XPP-AUTHOR-MICROCLUSTERS':['repeated author','clusters']
-  };
-  const map=document.getElementById('clusterMap'), linkG=document.getElementById('links'), nodeG=document.getElementById('nodes');
-  const ns='http://www.w3.org/2000/svg'; const radius=n=>34+Math.sqrt(n)*8.5;
-  const links=[]; for(let i=0;i<data.patterns.length;i++)for(let j=i+1;j<data.patterns.length;j++){const shared=data.patterns[i].papers.filter(x=>data.patterns[j].papers.includes(x));if(shared.length)links.push({a:data.patterns[i],b:data.patterns[j],shared})}
-  links.forEach(l=>{const line=document.createElementNS(ns,'line');const a=positions[l.a.pattern_id],b=positions[l.b.pattern_id];line.setAttribute('x1',a[0]);line.setAttribute('y1',a[1]);line.setAttribute('x2',b[0]);line.setAttribute('y2',b[1]);line.setAttribute('stroke-width',1+l.shared.length*1.15);line.classList.add('link');line.dataset.a=l.a.pattern_id;line.dataset.b=l.b.pattern_id;linkG.appendChild(line)});
-  data.patterns.forEach(p=>{const pos=positions[p.pattern_id],g=document.createElementNS(ns,'g');g.classList.add('node');g.dataset.id=p.pattern_id;g.setAttribute('transform',`translate(${pos[0]},${pos[1]})`);const c=document.createElementNS(ns,'circle');c.setAttribute('r',radius(p.n));c.setAttribute('fill',colors[p.kind]+'22');c.setAttribute('stroke',colors[p.kind]);g.appendChild(c);(labels[p.pattern_id]||[p.shared_feature]).forEach((line,i,arr)=>{const t=document.createElementNS(ns,'text');t.setAttribute('y',(i-(arr.length-1)/2)*17-5);t.textContent=line;g.appendChild(t)});const count=document.createElementNS(ns,'text');count.classList.add('count');count.setAttribute('y',27);count.textContent=`${p.n} papers`;g.appendChild(count);g.addEventListener('click',()=>selectPattern(p.pattern_id));nodeG.appendChild(g)});
-  const inspector=document.getElementById('inspector');
-  function selectPattern(id){const p=data.patterns.find(x=>x.pattern_id===id);document.querySelectorAll('.node').forEach(n=>n.classList.toggle('selected',n.dataset.id===id));document.querySelectorAll('.link').forEach(l=>l.classList.toggle('muted',l.dataset.a!==id&&l.dataset.b!==id));const neighbors=new Set([id]);links.filter(l=>l.a.pattern_id===id||l.b.pattern_id===id).forEach(l=>{neighbors.add(l.a.pattern_id);neighbors.add(l.b.pattern_id)});document.querySelectorAll('.node').forEach(n=>n.classList.toggle('muted',!neighbors.has(n.dataset.id)));inspector.innerHTML=`<div class="kind">${kinds[p.kind]}</div><h3>${p.shared_feature}</h3><p>${p.evidence_summary}</p><p><strong style="color:var(--soft)">${p.target_set_prevalence}</strong></p><p class="paper-refs">References ${p.papers.join(', ')}</p>`}
-  selectPattern('XPP-HIGH-SCORE-WEAK-INDEPENDENCE');
-
-  const patternFilter=document.getElementById('patternFilter');data.patterns.sort((a,b)=>a.shared_feature.localeCompare(b.shared_feature)).forEach(p=>{const o=document.createElement('option');o.value=p.pattern_id;o.textContent=`${p.shared_feature} (${p.n})`;patternFilter.appendChild(o)});
-  const search=document.getElementById('search'), evidenceFilter=document.getElementById('evidenceFilter'), list=document.getElementById('paperList'), resultCount=document.getElementById('resultCount');
-  const compact=id=>({'XPP-LOCALIZED-SIGN-LANGUAGE':'localized sign','XPP-LANGUAGE-TO-CLASSIFICATION':'isolated labels','XPP-PHYSIOLOGICAL-HAND-SENSING':'physiological sensing','XPP-BIOMEDICAL-ESCALATION':'biomedical','XPP-COMPOUND-MODEL-NAMING':'compound model','XPP-SWARM-EVOLUTIONARY-OPTIMIZATION':'swarm / GWO','XPP-HIGH-SCORE-WEAK-INDEPENDENCE':'95%+ / independence','XPP-REPORTING-MISMATCHES':'reporting mismatch','XPP-AUTHOR-MICROCLUSTERS':'author cluster'}[id]||id);
-  function render(){const q=search.value.trim().toLowerCase(),pat=patternFilter.value,ev=evidenceFilter.value;const found=data.papers.filter(p=>{const blob=[p.title,p.authors_raw,p.venue,...Object.values(p.protocol).map(x=>x.value)].join(' ').toLowerCase();return(!q||blob.includes(q))&&(!pat||p.patterns.includes(pat))&&(!ev||p.evidence_level===ev)});resultCount.textContent=`${found.length} of ${data.papers.length} records`;list.innerHTML='';found.forEach(p=>{const row=document.createElement('div');row.className='paper-row';row.tabIndex=0;row.innerHTML=`<div class="ref">REF ${String(p.reference_number).padStart(2,'0')}</div><div><div class="paper-title">${escapeHtml(p.title)}</div><div class="paper-meta">${escapeHtml(p.authors_raw||'Authors not transcribed')} · ${escapeHtml(p.venue||'Venue not recorded')} ${p.publication_year||''}</div></div><div class="tags">${p.patterns.slice(0,4).map(x=>`<span class="tag">${compact(x)}</span>`).join('')}${p.patterns.length>4?`<span class="tag">+${p.patterns.length-4}</span>`:''}</div><div class="evidence-level">${p.evidence_level.replace('_',' ')}</div>`;row.addEventListener('click',()=>openPaper(p));row.addEventListener('keydown',e=>{if(e.key==='Enter')openPaper(p)});list.appendChild(row)})}
-  [search,patternFilter,evidenceFilter].forEach(el=>el.addEventListener(el===search?'input':'change',render));render();
-
-  const dialog=document.getElementById('paperDialog'), prompts=Object.fromEntries(data.protocol_items.map(x=>[x.item_code,x.prompt]));
-  const dialogRef=document.getElementById('dialogRef'), dialogTitle=document.getElementById('dialogTitle'), dialogCitation=document.getElementById('dialogCitation'), dialogBody=document.getElementById('dialogBody');
-  function openPaper(p){dialogRef.textContent=`Reference ${p.reference_number} · ${p.evidence_level.replace('_',' ')} · ${p.review_stage.replace('_',' ')}`;dialogTitle.textContent=p.title;dialogCitation.innerHTML=`${escapeHtml(p.authors_raw||'Authors not transcribed')}<br>${escapeHtml(p.venue||'Venue not recorded')} ${p.publication_year||''}${p.doi?`<br><a class="doi-link" href="https://doi.org/${encodeURIComponent(p.doi)}" target="_blank" rel="noopener">${escapeHtml(p.doi)} ↗</a>`:''}`;dialogBody.innerHTML=data.protocol_items.map(item=>{const x=p.protocol[item.item_code]||{status:'not_assessable',value:'No response recorded'};return`<div class="field"><div class="field-name">${escapeHtml(prompts[item.item_code])}</div><div class="status ${x.status}">${x.status.replaceAll('_',' ')}</div><div class="field-value">${escapeHtml(x.value||'—')}</div></div>`}).join('');dialog.showModal()}
-  dialog.querySelector('.close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
-  function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-})();
-</script>
+  <header class="shell">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">80–20 project</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">Paper Trail</span></nav>
+    <a class="toplink" href="https://github.com/phinnphace/split-tester">Git history ↗</a>
+  </header>
+  <main class="shell">
+    <div class="eyebrow">Correction recorded · rebuild in progress</div>
+    <h1>Paper Trail is starting again from a clean master.</h1>
+    <p class="lede">A reference document was mistakenly included in the initial corpus. Because later cataloging and analysis inherited that input, the active corpus and every derived public output have been retired in full.</p>
+    <section class="status" aria-labelledby="status-heading">
+      <h2 id="status-heading">Current status</h2>
+      <p><span class="date">21 August 2026:</span> the active catalog data, evidence grid, node map, cluster assignments, summaries, and generated exports were purged. No paper records or analytical results from that corpus remain active here.</p>
+      <p>The correction does not rewrite the repository’s history. Earlier versions remain in Git as a transparent record of what was published and how it was corrected.</p>
+      <div class="steps" aria-label="Rebuild sequence">
+        <div class="step"><span>01 · complete</span><strong>Retire the contaminated corpus</strong><p>Remove the source set and all inherited outputs from active use.</p></div>
+        <div class="step"><span>02 · next</span><strong>Register the corrected master list</strong><p>Re-establish the complete citation set without selecting papers in or out.</p></div>
+        <div class="step"><span>03 · pending</span><strong>Rebuild under one protocol</strong><p>Review every registered record through the same evidence process before republishing.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer class="shell"><span>Part of the 80–20 project.</span><span><a href="/">Project home</a> · <a href="https://github.com/phinnphace/split-tester/blob/main/CORRECTION-PAPER-TRAIL-2026-08-21.md">Correction record</a></span></footer>
 </body>
 </html>
