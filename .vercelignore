@@ -14,9 +14,10 @@
 # Also read at root by app.py, which is why it is not moved into a public/ dir.
 !carnival_wheel.html
 
-# Paper Trail — correction/rebuild pages. No corpus data is deployed.
+# Paper Trail — correction/rebuild page plus the clean preliminary map.
 !paper-catalog.html
 !paper-trail-map.html
+!paper_trail_map_data.js
 
 # Vercel's own config must reach the build for the rewrite rule to apply.
 !vercel.json
