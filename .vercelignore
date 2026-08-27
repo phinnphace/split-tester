@@ -2,8 +2,8 @@
 # web root. Without this file EVERYTHING is publicly fetchable — sample_data.zip
 # (591 KB of CASIA images), docs/project_notes/, CLAUDE.md, the Python sources.
 #
-# Allowlist, not denylist: exclude everything, then re-admit only the two files
-# the showcase page actually needs. Anything added to the repo later stays out
+# Allowlist, not denylist: exclude everything, then re-admit only the public files
+# the deployed pages actually need. Anything added to the repo later stays out
 # of the deploy until it is named here on purpose.
 *
 
@@ -14,8 +14,7 @@
 # Also read at root by app.py, which is why it is not moved into a public/ dir.
 !carnival_wheel.html
 
-# Paper Trail — correction/rebuild page plus the clean preliminary map.
-!paper-catalog.html
+# Paper Trail — clean first-iteration map and generated public citation metadata.
 !paper-trail-map.html
 !paper_trail_map_data.js
 

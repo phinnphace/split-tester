@@ -43,9 +43,9 @@ Prefer to just spin? The Wheel of Splits is live at
 
 The paper-audit side of the project is available at
 [go.dataacorns.com/80-20/paper-catalog](https://go.dataacorns.com/80-20/paper-catalog).
-Its prior corpus and all inherited public outputs were retired on 21 August 2026 after a
-reference document was found in the initial source set. The route now records the correction
-and clean-rebuild status. Git history is preserved; see
+The corrected corpus has been rebuilt, and the route now presents the first-iteration Paper
+Trail relationship map and the complete 45-item citation list. The earlier corpus and its
+inherited public outputs were retired on 21 August 2026; Git history is preserved. See
 [`CORRECTION-PAPER-TRAIL-2026-08-21.md`](CORRECTION-PAPER-TRAIL-2026-08-21.md).
 
 A 40-image sample of the actual dataset is included in `sample_data.zip`.

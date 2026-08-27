@@ -3,12 +3,13 @@
 ## Public paper catalog
 
 **Value / Detail:**
-`paper-catalog.html` and `paper-trail-map.html` are correction/rebuild pages. The prior
-active corpus, generated browser data, node map, and exporter were retired on 2026-08-21.
-The routes intentionally publish no paper records or analytical results until a clean rebuild
-from the corrected master citation CSV is reviewed. Ordinary Git history is preserved.
+`paper-trail-map.html` is the active public first-iteration relationship map, backed by the
+generated `paper_trail_map_data.js` citation metadata. Both `/paper-catalog` and
+`/paper-trail-map` resolve to it. The obsolete correction-only pause page and retired catalog
+export are absent from the current tree; the correction record and ordinary Git history are
+preserved.
 
-**Last verified:** 2026-08-21
+**Last verified:** 2026-08-27
 
 ---
 
@@ -17,15 +18,16 @@ from the corrected master citation CSV is reviewed. Ordinary Git history is pres
 **Value / Detail:**
 
 1. **80-20** — `github.com/phinnphace/80-20` — the *primary* project: train/test split work
-   on CASIA Chinese-character images. Deployed dashboard: (http://go.dataacorns.com/80-20/project) .
+   on CASIA Chinese-character images. Deployed dashboard: https://80-20.streamlit.app .
    Contains `newglasses/` — a recharts slide deck (a separate artifact, NOT the carnival
-   wheel). 
+   wheel). NOTE (phinn's decree, 2026-07-26): do not reference "the final" anywhere — it is
+   not on git (only component parts are) and mentioning it only causes confusion.
 2. **split-tester** — `github.com/phinnphace/split-tester` — the *side quest* spawned from
-   80-20. A standalone one-time Streamlit demo (`app.py`), now Vercel that runs the same model/seed/data across
+   80-20. A standalone Streamlit demo (`app.py`) that runs the same model/seed/data across
    split ratios 0.5 → 0.9 and shows how much validation accuracy swings. This mounted folder.
 3. **The carnival wheel** — a widget housed under 80-20: deployed at
    go.dataacorns.com/80-20/carnival-wheel. The artifact of record is the built single-file
-   `carnival_wheel.html` tracked in split-tester ( 2026-07-26 — supersedes the
+   `carnival_wheel.html` tracked in split-tester (per phinn, 2026-07-26 — supersedes the
    earlier "own separate space/repo" note). The local `carnival-split-wheel/` Vite/React
    working copy (`vite-plugin-singlefile`, gitignored) is what rebuilds it. It is NOT
    80-20/newglasses (a separate recharts slide deck). NOTE ON NAMING: "Wheel of Splits" is

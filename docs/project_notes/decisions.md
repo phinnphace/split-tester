@@ -36,6 +36,28 @@ master citation CSV.
 - Earlier public versions remain inspectable in Git history.
 - Every citation in the corrected master will be registered before review begins.
 
+## Publish the clean first-iteration Paper Trail map and retire the pause page
+
+**Date:** 2026-08-27
+**Status:** Accepted
+
+**Context:**
+The corrected master corpus was rebuilt and reviewed sufficiently to publish a preliminary
+relationship map and the complete 45-item citation list. The correction-only pause page was
+no longer the current public state.
+
+**Decision:**
+Keep the correction markdown and ordinary Git history as the record of the corpus retirement.
+Remove the obsolete pause-page build and retired generated citation-list assets from the
+current tree. Point both `/paper-catalog` and `/paper-trail-map` to the clean first-iteration
+map so established links remain usable.
+
+**Consequences:**
+- The active public Paper Trail surface is the preliminary map, not the pause notice.
+- The prior pause page and retired catalog export remain available through Git history only.
+- The current map data and full citation list are the only Paper Trail corpus-derived public
+  assets admitted by the Vercel allowlist.
+
 ## Embed the wheel as a compiled single-file asset, inlined via components.html
 
 **Date:** 2026-07-22 (recorded; decision made over prior commits)
