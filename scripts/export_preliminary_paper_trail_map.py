@@ -3,8 +3,9 @@
 
 SQLite remains authoritative. The browser payload contains six paper-level
 relationship categories, their pairwise overlaps, the complete 45-item corpus
-citation list, and the short reference-source list supplied for the site. It
-does not contain full article text, local paths, or held self-citation edges.
+citation list, the ten current diagnostic cross-paper patterns, and the short
+reference-source list supplied for the site. It does not contain full article
+text, local paths, or held self-citation edges.
 """
 
 from __future__ import annotations
@@ -23,6 +24,13 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_DIR = SCRIPT_DIR.parent
 WORKSPACE_DIR = REPO_DIR.parent
 DEFAULT_DB = WORKSPACE_DIR / "paper_catalog" / "papers.sqlite3"
+DEFAULT_ANALYSIS_DB = (
+    WORKSPACE_DIR
+    / "paper_catalog"
+    / "iterations"
+    / "2026-08-29"
+    / "papers.sqlite3"
+)
 DEFAULT_OUTPUT = REPO_DIR / "paper_trail_map_data.js"
 REFERENCE_CANDIDATES = (
     WORKSPACE_DIR / "reference-citation.txt",
@@ -34,6 +42,7 @@ REFERENCE_CANDIDATES = (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
+    parser.add_argument("--analysis-db", type=Path, default=DEFAULT_ANALYSIS_DB)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--reference-citations", type=Path)
     return parser.parse_args()
@@ -200,7 +209,88 @@ def load_reference_citations(explicit_path: Path | None) -> list[str]:
     return citations
 
 
-def build_payload(db_path: Path, reference_path: Path | None) -> dict[str, Any]:
+def load_diagnostic_patterns(db_path: Path) -> list[dict[str, Any]]:
+    if not db_path.is_file():
+        raise ValueError(f"Missing diagnostic catalog database: {db_path}")
+
+    connection = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    connection.row_factory = sqlite3.Row
+    try:
+        if scalar(connection, "PRAGMA integrity_check") != "ok":
+            raise ValueError("Diagnostic catalog integrity check failed")
+        if connection.execute("PRAGMA foreign_key_check").fetchall():
+            raise ValueError("Diagnostic catalog has foreign-key violations")
+
+        rows = connection.execute(
+            """
+            SELECT pattern_id, pattern_type, shared_feature, comparison_method,
+                   evidence_summary, target_set_prevalence,
+                   alternative_explanation, confidence, materiality, status
+            FROM cross_paper_patterns
+            ORDER BY pattern_id
+            """
+        ).fetchall()
+        patterns: list[dict[str, Any]] = []
+        for row in rows:
+            memberships = connection.execute(
+                """
+                SELECT ce.ordinal, cpp.role
+                FROM cross_pattern_papers cpp
+                JOIN corpus_entries ce ON ce.paper_id=cpp.paper_id
+                WHERE cpp.pattern_id=?
+                ORDER BY ce.ordinal
+                """,
+                (row["pattern_id"],),
+            ).fetchall()
+            patterns.append(
+                {
+                    "id": row["pattern_id"],
+                    "type": row["pattern_type"],
+                    "label": row["shared_feature"],
+                    "method": row["comparison_method"],
+                    "summary": row["evidence_summary"],
+                    "prevalence": row["target_set_prevalence"],
+                    "alternative": row["alternative_explanation"],
+                    "confidence": row["confidence"],
+                    "materiality": row["materiality"],
+                    "status": row["status"],
+                    "paperOrdinals": [member["ordinal"] for member in memberships],
+                    "memberships": [
+                        {"ordinal": member["ordinal"], "role": member["role"]}
+                        for member in memberships
+                    ],
+                }
+            )
+    finally:
+        connection.close()
+
+    if len(patterns) != 10:
+        raise ValueError(f"Expected 10 public diagnostic patterns; found {len(patterns)}")
+    expected_ids = {
+        "XPP-AUTHOR-MICROCLUSTERS",
+        "XPP-BIOMEDICAL-ESCALATION",
+        "XPP-COMPOUND-MODEL-NAMING",
+        "XPP-HIGH-SCORE-WEAK-INDEPENDENCE",
+        "XPP-LANGUAGE-TO-CLASSIFICATION",
+        "XPP-LOCALIZED-SIGN-LANGUAGE",
+        "XPP-PHYSIOLOGICAL-HAND-SENSING",
+        "XPP-REPORTING-MISMATCHES",
+        "XPP-SWARM-EVOLUTIONARY-OPTIMIZATION",
+        "XPP-SYNTAX-TITLE-LEXICON",
+    }
+    actual_ids = {pattern["id"] for pattern in patterns}
+    if actual_ids != expected_ids:
+        raise ValueError(
+            "Public diagnostic pattern identifiers differ from the current catalog"
+        )
+    return patterns
+
+
+def build_payload(
+    db_path: Path,
+    analysis_db_path: Path,
+    reference_path: Path | None,
+) -> dict[str, Any]:
     if not db_path.is_file():
         raise ValueError(f"Missing catalog database: {db_path}")
 
@@ -310,9 +400,11 @@ def build_payload(db_path: Path, reference_path: Path | None) -> dict[str, Any]:
             "paperCount": len(papers),
             "relationshipCount": len(patterns),
             "crossCitationCount": len(cross_citations),
+            "diagnosticPatternCount": 10,
         },
         "patterns": patterns,
         "edges": edges,
+        "diagnosticPatterns": load_diagnostic_patterns(analysis_db_path),
         "papers": papers,
         "referenceCitations": load_reference_citations(reference_path),
     }
@@ -329,7 +421,7 @@ def build_payload(db_path: Path, reference_path: Path | None) -> dict[str, Any]:
 def main() -> int:
     args = parse_args()
     try:
-        payload = build_payload(args.db, args.reference_citations)
+        payload = build_payload(args.db, args.analysis_db, args.reference_citations)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         body = (
             "// Generated from the Paper Trail SQLite catalog. Do not edit by hand.\n"
@@ -350,6 +442,7 @@ def main() -> int:
                 "edges": len(payload["edges"]),
                 "papers": len(payload["papers"]),
                 "referenceCitations": len(payload["referenceCitations"]),
+                "diagnosticPatterns": len(payload["diagnosticPatterns"]),
                 "counts": {
                     pattern["id"]: pattern["countLabel"]
                     for pattern in payload["patterns"]

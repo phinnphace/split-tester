@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="A first-iteration map of six relationships in the Paper Trail citation corpus.">
+  <meta name="description" content="A working map and ten-pattern diagnostic view of the Paper Trail citation corpus.">
   <title>Paper Trail — Working Corpus Map</title>
   <style>
     :root {
@@ -177,6 +177,85 @@
     .invitation strong { color: var(--text); }
     .invitation a { color: var(--node); text-decoration: none; }
     .invitation a:hover { text-decoration: underline; }
+    .diagnostics { padding: 42px 0 8px; }
+    .diagnostic-intro {
+      max-width: 790px;
+      margin: 15px 0 24px;
+      color: var(--soft);
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    .diagnostic-ledger { border-top: 1px solid var(--line); }
+    .diagnostic-entry { border-bottom: 1px solid var(--line); }
+    .diagnostic-entry summary {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) minmax(170px, 290px);
+      gap: 15px;
+      align-items: baseline;
+      padding: 17px 2px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .diagnostic-entry summary::-webkit-details-marker { display: none; }
+    .diagnostic-entry summary::after {
+      content: "+";
+      position: absolute;
+      right: 2px;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    .diagnostic-entry[open] summary::after { content: "−"; }
+    .diagnostic-entry summary { position: relative; padding-right: 28px; }
+    .diagnostic-number {
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    .diagnostic-title {
+      color: var(--text);
+      font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+    .diagnostic-prevalence {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .diagnostic-body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px 34px;
+      padding: 3px 28px 25px 59px;
+    }
+    .diagnostic-field h3 {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .diagnostic-field p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .diagnostic-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 11px;
+    }
+    .diagnostic-tag {
+      padding: 3px 7px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: .04em;
+    }
     .citations { padding: 34px 0 12px; }
     .section-head {
       display: flex;
@@ -252,6 +331,9 @@
       .map-wrap, svg { height: 470px; }
       .inspect { min-height: 240px; max-height: none; overflow: visible; padding: 20px 0; border-top: 1px solid var(--rule); border-left: 0; }
       .citation-list { grid-template-columns: 1fr; }
+      .diagnostic-entry summary { grid-template-columns: 34px minmax(0, 1fr); }
+      .diagnostic-prevalence { grid-column: 2; }
+      .diagnostic-body { grid-template-columns: 1fr; padding-left: 49px; }
       .section-head { display: block; }
       .section-head p { margin-top: 7px; }
       .foot { align-items: flex-start; flex-direction: column; }
@@ -294,6 +376,15 @@
       <p>Many of these papers have one or more PubPeer comments, and the foundational GWO paper itself has PubPeer comments. That is great, but clearly this is not enough to stop this. <strong>More peer action is necessary.</strong></p>
       <p><strong>Reference #23 is a paywalled, dataset-only record.</strong> All links and DOIs have been verified and are here for scrutiny.</p>
       <p>Poke around. For contact, error reporting, or collaboration: <a href="mailto:markson.2@osu.edu">markson.2@osu.edu</a>.</p>
+    </section>
+
+    <section class="diagnostics" aria-labelledby="diagnostics-heading">
+      <div class="section-head">
+        <h2 id="diagnostics-heading">Diagnostic pattern layer</h2>
+        <p id="diagnostic-count"></p>
+      </div>
+      <p class="diagnostic-intro">Ten overlapping ways of reading the current catalog. These records preserve the comparison method, observed relationship, prevalence, alternative reading, and exact corpus membership used for continued analysis.</p>
+      <div class="diagnostic-ledger" id="diagnostic-ledger"></div>
     </section>
 
     <section class="citations" aria-labelledby="corpus-citations-heading">
@@ -359,8 +450,9 @@
         return element;
       };
 
-      document.getElementById('status-counts').textContent = `${data.meta.paperCount} registered papers · ${data.meta.relationshipCount} relationship nodes`;
+      document.getElementById('status-counts').textContent = `${data.meta.paperCount} registered papers · ${data.meta.relationshipCount} map nodes · ${data.meta.diagnosticPatternCount} diagnostic patterns`;
       document.getElementById('citation-count').textContent = `${data.papers.length} of ${data.meta.paperCount} corpus records`;
+      document.getElementById('diagnostic-count').textContent = `${data.diagnosticPatterns.length} of ${data.meta.diagnosticPatternCount} current patterns`;
 
       data.edges.forEach(edge => {
         const source = positions[edge.source];
@@ -468,6 +560,47 @@
 
       document.getElementById('map').addEventListener('click', event => {
         if (event.target.id === 'map') select(selectedId);
+      });
+
+      const diagnosticLedger = document.getElementById('diagnostic-ledger');
+      data.diagnosticPatterns.forEach((pattern, index) => {
+        const entry = document.createElement('details');
+        entry.className = 'diagnostic-entry';
+        const references = pattern.paperOrdinals
+          .map(number => `#${String(number).padStart(2, '0')}`)
+          .join(', ');
+        entry.innerHTML = `
+          <summary>
+            <span class="diagnostic-number">${String(index + 1).padStart(2, '0')}</span>
+            <span class="diagnostic-title">${escapeHtml(pattern.label)}</span>
+            <span class="diagnostic-prevalence">${escapeHtml(pattern.prevalence)}</span>
+          </summary>
+          <div class="diagnostic-body">
+            <div class="diagnostic-field">
+              <h3>How grouped</h3>
+              <p>${escapeHtml(pattern.method)}</p>
+            </div>
+            <div class="diagnostic-field">
+              <h3>Observed relationship</h3>
+              <p>${escapeHtml(pattern.summary)}</p>
+            </div>
+            <div class="diagnostic-field">
+              <h3>Alternative reading</h3>
+              <p>${escapeHtml(pattern.alternative)}</p>
+            </div>
+            <div class="diagnostic-field">
+              <h3>Corpus references</h3>
+              <p>${escapeHtml(references)}</p>
+              <div class="diagnostic-tags">
+                <span class="diagnostic-tag">${escapeHtml(pattern.type.replaceAll('_', ' '))}</span>
+                <span class="diagnostic-tag">${escapeHtml(pattern.materiality)}</span>
+                <span class="diagnostic-tag">${escapeHtml(pattern.confidence)} confidence</span>
+                <span class="diagnostic-tag">${escapeHtml(pattern.status)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        diagnosticLedger.appendChild(entry);
       });
 
       const citationList = document.getElementById('citation-list');

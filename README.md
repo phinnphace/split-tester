@@ -44,8 +44,10 @@ Prefer to just spin? The Wheel of Splits is live at
 The paper-audit side of the project is available at
 [go.dataacorns.com/80-20/paper-catalog](https://go.dataacorns.com/80-20/paper-catalog).
 The corrected corpus has been rebuilt, and the route now presents the first-iteration Paper
-Trail relationship map and the complete 45-item citation list. The earlier corpus and its
-inherited public outputs were retired on 21 August 2026; Git history is preserved. See
+Trail relationship map, all ten current diagnostic cross-paper patterns, and the complete
+45-item citation list. The diagnostic layer is generated from the same SQLite records used
+for local analysis. The earlier corpus and its inherited public outputs were retired on
+21 August 2026; Git history is preserved. See
 [`CORRECTION-PAPER-TRAIL-2026-08-21.md`](CORRECTION-PAPER-TRAIL-2026-08-21.md).
 
 A 40-image sample of the actual dataset is included in `sample_data.zip`.
